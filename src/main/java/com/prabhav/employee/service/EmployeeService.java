@@ -47,9 +47,16 @@ public class EmployeeService {
     }
 
     public String deleteEmployee(Long employeeId) {
-        employeeRepo.deleteById(employeeId);
-        return "Employee deleted successfully";
-
+        try {
+            if (employeeRepo.existsById(employeeId)) {
+                employeeRepo.deleteById(employeeId);
+                return "Employee deleted successfully";
+            } else {
+                return "Employee not found"; // Return a message if the employee doesn't exist
+            }
+        } catch (Exception e) {
+            return "Failed to delete employee: " + e.getMessage(); // Handle any exceptions and return an error message
+        }
     }
 
     public List<EmployeeResponse> getAllEmployees() {
