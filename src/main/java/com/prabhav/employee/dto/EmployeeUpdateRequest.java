@@ -8,10 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeResponse {
-
-    @JsonProperty("employee_id")
-    private Long employeeId;
+public class EmployeeUpdateRequest {
 
     @JsonProperty("first_name")
     private String firstName;
@@ -22,13 +19,15 @@ public class EmployeeResponse {
     @JsonProperty("email")
     private String email;
 
+    @JsonProperty("password")
+    private String password;
+
     @JsonProperty("title")
     private String title;
 
     @JsonProperty("photograph_path")
     private String photographPath;
 
-    @JsonProperty("department")
-    private String departmentName;
-
+    @JsonProperty("department_id")
+    private Long departmentId;
 }

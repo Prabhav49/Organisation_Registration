@@ -9,11 +9,7 @@ import java.util.Optional;
 @Repository
 public interface OrganizationRepo extends JpaRepository<Organization, Long> {
 
-    // Find organization by name
     Optional<Organization> findByName(String name);
-
-    // Find organization by HR contact email (unique)
     Optional<Organization> findByHrContactEmail(String hrContactEmail);
 
-    // Additional custom queries as needed
 }
