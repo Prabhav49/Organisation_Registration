@@ -1,7 +1,10 @@
 package com.prabhav.employee.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -13,28 +16,19 @@ public class Organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long organizationId;
+    private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
+    @NotBlank(message = "Organization name cannot be blank")
+    @Size(min = 2, max = 100, message = "Organization name must be between 2 and 100 characters")
     private String name;
 
-    @Column(name = "hr_contact_name")
-    private String hrContactName;
-
-    @Column(name = "hr_contact_email", unique = true)
-    private String hrContactEmail;
-
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
+    @NotBlank(message = "Address cannot be blank")
+    @Size(min = 5, max = 255, message = "Address must be between 5 and 255 characters")
     private String address;
 
-    @Column(name = "city")
-    private String city;
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrganizationHR> hrContacts;
 
-    @Column(name = "pincode")
-    private int pincode;
-
-    @Column(name = "phone")
-    private String phone;
-
-    // No relationship to Employee here, just the fields for Organization.
 }

@@ -19,7 +19,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final JwtUtil jwtUtil;
-    
+
     @PostMapping("/create")
     public ResponseEntity<String> createEmployee(
             @RequestBody @Valid EmployeeRequest request,
@@ -28,7 +28,7 @@ public class EmployeeController {
             return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
         }
         String response = employeeService.createEmployee(request);
-        return ResponseEntity.status(201).body(response); // HttpStatus.CREATED = 201
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/getEmployeeInfo/{email}")

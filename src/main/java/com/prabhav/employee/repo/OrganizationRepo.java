@@ -10,6 +10,9 @@ import java.util.Optional;
 public interface OrganizationRepo extends JpaRepository<Organization, Long> {
 
     Optional<Organization> findByName(String name);
-    Optional<Organization> findByHrContactEmail(String hrContactEmail);
 
+    // Correctly navigate the relationship to search for an email in the hrContacts list
+    Optional<Organization> findByHrContacts_Email(String email);
+
+    Optional<Organization> findByAddress(String address);
 }
