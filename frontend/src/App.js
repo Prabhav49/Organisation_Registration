@@ -1,17 +1,24 @@
 // src/App.js
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Use Routes instead of Switch
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
+import Login from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
-import LoginPage from './pages/LoginPage';
+import PrivateRoute from './components/PrivateRoute'; 
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Define routes for the Login and Dashboard pages */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
