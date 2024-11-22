@@ -12,7 +12,6 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [organizations, setOrganizations] = useState([]);
-    const [hrList, setHrList] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddOrganization, setShowAddOrganization] = useState(false);
     const [showProfile, setShowProfile] = useState(false); 
@@ -48,16 +47,6 @@ const Dashboard = () => {
         }
     };
 
-    const fetchHrsByName = async (token, name) => {
-        try {
-            const response = await axios.get(`http://localhost:9192/api/v1/hr/getHrsByName/${name}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setHrList(response.data);
-        } catch (error) {
-            console.error('Failed to fetch HRs:', error);
-        }
-    };
 
     const fetchOrganizationByName = async (token, name) => {
         try {
@@ -78,13 +67,11 @@ const Dashboard = () => {
         
         if (query.length >= 3) { 
             await fetchOrganizationByName(token, query);
-            await fetchHrsByName(token, query);
+
         } else if (query.length === 0) {  
             fetchOrganizations(token);
-            setHrList([]); 
         } else {
             setOrganizations([]);  
-            setHrList([]);
         }
     };
     const handleDelete = async (id) => {
@@ -185,30 +172,7 @@ const Dashboard = () => {
                                 <tr><td colSpan="3">No Organizations found</td></tr>
                             )}
                         </tbody>
-                    </table>
-                    <h2>HRs</h2>
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {hrList.length > 0 ? (
-                                hrList.map((hr) => (
-                                    <tr key={hr.id}>
-                                        <td>{hr.name}</td>
-                                        <td>
-                                            <button onClick={() => handleViewHRs(hr.organizationId)}>View HR Details</button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr><td colSpan="2">No HRs found</td></tr>
-                            )}
-                        </tbody>
-                    </table>
+                    </table>                    
                 </div>
             )}
         </div>

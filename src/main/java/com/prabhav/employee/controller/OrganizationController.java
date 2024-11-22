@@ -42,7 +42,19 @@ public class OrganizationController {
         OrganizationResponse response = organizationService.getOrganizationByName(name);
         return ResponseEntity.ok(response);
     }
-
+    @GetMapping("/getHRById/{id}")
+    public ResponseEntity<OrganizationHRResponse> getHRById(
+            @PathVariable Long id,
+            HttpServletRequest httpRequest) {
+        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+            return ResponseEntity.status(401).body(null);
+        }
+        OrganizationHRResponse response = organizationService.getHRById(id);
+        if (response == null) {
+            return ResponseEntity.status(404).body(null); // HR not found
+        }
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/getByHrEmail/{hrContactEmail}")
     public ResponseEntity<OrganizationResponse> getOrganizationByHrEmail(
             @PathVariable String hrContactEmail,
@@ -51,6 +63,9 @@ public class OrganizationController {
             return ResponseEntity.status(401).body(null);
         }
         OrganizationResponse response = organizationService.getOrganizationByHrEmail(hrContactEmail);
+        if (response == null) {
+            return ResponseEntity.status(404).body(null);
+        }
         return ResponseEntity.ok(response);
     }
 

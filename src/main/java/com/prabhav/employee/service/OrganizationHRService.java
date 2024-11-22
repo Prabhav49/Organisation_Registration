@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,21 +28,18 @@ public class OrganizationHRService {
             return "Organization not found";
         }
         Organization organization = organizationOpt.get();
-        OrganizationHR hrContact = organizationHRMapper.toEntity(request, organization);
+        OrganizationHR hrContact = organizationHRMapper.toEntity(request, organization); // Pass organization here
         organizationHRRepo.save(hrContact);
         return "HR contact added successfully";
     }
 
-    public List<OrganizationHRResponse> getHrsByName(String name, Long organizationId) {
-        List<OrganizationHR> hrContacts = organizationHRRepo.findByOrganization_NameAndOrganization_Id(name, organizationId);
+    public OrganizationHRResponse getHrContactByEmail(String email, Long organizationId) {
+        Optional<OrganizationHR> hrContactOpt = organizationHRRepo.findByEmail(email);
 
-        if (hrContacts.isEmpty()) {
-            System.out.println("No HR contacts found for name: " + name + " and organization ID: " + organizationId);
+        if (hrContactOpt.isEmpty()) {
+            System.out.println("HR contact not found for email: " + email + " and organization ID: " + organizationId);
         }
-
-        return hrContacts.stream()
-                .map(organizationHRMapper::toResponse)
-                .collect(Collectors.toList());
+        return hrContactOpt.map(organizationHRMapper::toResponse).orElse(null);
     }
 
     public List<OrganizationHRResponse> getAllHrContacts(Long organizationId) {
@@ -55,6 +51,7 @@ public class OrganizationHRService {
         List<OrganizationHR> hrContacts = organizationHRRepo.findByOrganization_Id(organizationId);
         return organizationHRMapper.toResponse(hrContacts);
     }
+
 
     public String updateHrContact(Long hrId, Long organizationId, OrganizationHRUpdateRequest updateRequest) {
         Optional<OrganizationHR> hrContactOpt = organizationHRRepo.findByIdAndOrganization_Id(hrId, organizationId);

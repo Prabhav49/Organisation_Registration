@@ -29,7 +29,10 @@ public class OrganizationService {
         organizationRepo.save(organization);
         return "Organization Created Successfully";
     }
-
+    public OrganizationHRResponse getHRById(Long id) {
+        Optional<OrganizationHR> hr = organizationHRRepo.findById(id);
+        return hr.map(organizationHRMapper::toResponse).orElse(null);
+    }
     public OrganizationResponse getOrganizationByName(String name) {
         Optional<Organization> organization = organizationRepo.findByName(name);
         return organization.map(organizationMapper::toResponse).orElse(null);

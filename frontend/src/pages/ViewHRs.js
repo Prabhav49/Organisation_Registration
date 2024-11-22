@@ -13,6 +13,8 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         email: '',
         contactNumber: '',
     });
+    const [emailToSearch, setEmailToSearch] = useState('');
+    const [searchedHr, setSearchedHr] = useState(null); // New state to hold HR details fetched by email
 
     useEffect(() => {
         const token = localStorage.getItem('user');
@@ -126,10 +128,52 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         }
     };
 
+    const handleSearchByEmail = async () => {
+        const token = localStorage.getItem('user');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/getByEmail/${emailToSearch}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setSearchedHr(response.data);
+        } catch (error) {
+            console.error('Error fetching HR by email:', error.response?.data || error.message);
+            setSearchedHr(null); // Reset if error occurs
+        }
+    };
+
     return (
         <div>
             <h1>HRs for Organization: {organizationName}</h1>
             <button onClick={() => onViewHRs()}>Back to Dashboard</button>
+
+            <div>
+                <input
+                    type="email"
+                    placeholder="Search HR by email"
+                    value={emailToSearch}
+                    onChange={(e) => setEmailToSearch(e.target.value)}
+                />
+                <button onClick={handleSearchByEmail}>Search</button>
+            </div>
+
+            {searchedHr ? (
+                <div>
+                    <h3>HR Details:</h3>
+                    <p>First Name: {searchedHr.firstName}</p>
+                    <p>Last Name: {searchedHr.lastName}</p>
+                    <p>Email: {searchedHr.email}</p>
+                    <p>Contact Number: {searchedHr.contactNumber}</p>
+                </div>
+            ) : (
+                <p>No HR found for this email.</p>
+            )}
+
             {hrList.length === 0 ? (
                 <h3>No HR records have been found. Please add HR details to continue.</h3>
             ) : (
