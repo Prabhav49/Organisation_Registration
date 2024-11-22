@@ -3,13 +3,16 @@ package com.prabhav.employee.service;
 import com.prabhav.employee.dto.EmployeeRequest;
 import com.prabhav.employee.dto.EmployeeUpdateRequest;
 import com.prabhav.employee.dto.EmployeeResponse;
+import com.prabhav.employee.dto.PasswordChangeRequest;
 import com.prabhav.employee.entity.Employee;
 import com.prabhav.employee.mapper.EmployeeMapper;
 import com.prabhav.employee.repo.EmployeeRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +48,26 @@ public class EmployeeService {
         employeeRepo.save(employee);
         return "Employee's profile updated successfully";
     }
+    public String changePassword(Long employeeId, PasswordChangeRequest passwordChangeRequest) {
+        Employee employee = employeeRepo.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Validate old password
+        if (!passwordEncoder.matches(passwordChangeRequest.getOldPassword(), employee.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        // Check if new password and confirm password match
+        if (!passwordChangeRequest.getNewPassword().equals(passwordChangeRequest.getConfirmPassword())) {
+            throw new RuntimeException("New password and confirm password do not match");
+        }
+
+        // Update password
+        employee.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+        employeeRepo.save(employee);
+
+        return "Password changed successfully";
+    }
 
     public String deleteEmployee(Long employeeId) {
         try {
@@ -56,6 +79,32 @@ public class EmployeeService {
             }
         } catch (Exception e) {
             return "Failed to delete employee: " + e.getMessage(); // Handle any exceptions and return an error message
+        }
+    }
+
+    public String uploadProfilePicture(Long employeeId, MultipartFile file) {
+        Employee employee = employeeRepo.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Define the directory to save images
+        String uploadDir = System.getProperty("user.dir") + "/public/images/profiles/";
+        String fileName = employeeId + "_" + file.getOriginalFilename();
+
+        try {
+            // Ensure directory exists
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+
+            // Save file
+            File destination = new File(uploadDir + fileName);
+            file.transferTo(destination);
+
+            employee.setPhotographPath("/images/profiles/" + fileName);
+            employeeRepo.save(employee);
+
+            return "Profile picture uploaded successfully";
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload profile picture: " + e.getMessage());
         }
     }
 

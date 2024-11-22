@@ -1,10 +1,8 @@
-// src/pages/LoginPage.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
 
-function LoginPage() {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,4 +47,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default Login;

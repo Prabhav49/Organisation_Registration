@@ -1,25 +1,43 @@
-// src/pages/Dashboard.js
-
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate in react-router-dom v6
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthService from '../services/AuthService';
+import { jwtDecode } from 'jwt-decode';
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // For navigation
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
 
-  const handleLogout = () => {
-    // Remove token from localStorage
-    localStorage.removeItem('user');
-    
-    // Redirect to login page
-    navigate('/login');
-  };
+    useEffect(() => {
+        const token = localStorage.getItem('user'); 
+        
+        if (token) {
+            try {
+                const decoded = jwtDecode(token); 
+                setEmail(decoded.sub);
+            } catch (error) {
+                console.error('Failed to decode token:', error);
+                navigate('/login');
+            }
+        } else {
+            navigate('/login');
+        }
+    }, [navigate]);
 
-  return (
-    <div className="dashboard">
-      <h1>Welcome to the Dashboard!</h1>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  );
+    const handleLogout = () => {
+
+        if (email) {
+          AuthService.logout(email)
+        } 
+        navigate('/login'); 
+    };
+
+    return (
+        <div>
+            <h1>Dashboard</h1>
+            <button onClick={() => navigate('/profile')}>Profile</button>
+            <button onClick={handleLogout}>Logout</button>
+        </div>
+    );
 };
 
 export default Dashboard;

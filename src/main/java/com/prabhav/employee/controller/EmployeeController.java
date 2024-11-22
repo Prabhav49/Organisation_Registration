@@ -3,6 +3,7 @@ package com.prabhav.employee.controller;
 import com.prabhav.employee.dto.EmployeeRequest;
 import com.prabhav.employee.dto.EmployeeResponse;
 import com.prabhav.employee.dto.EmployeeUpdateRequest;
+import com.prabhav.employee.dto.PasswordChangeRequest;
 import com.prabhav.employee.service.EmployeeService;
 import com.prabhav.employee.auth.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -51,6 +54,32 @@ public class EmployeeController {
             return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
         }
         String response = employeeService.updateEmployeeProfile(employeeId, updateRequest);
+        return ResponseEntity.ok(response);
+    }
+    @PutMapping("/changePassword/{employeeId}")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Long employeeId,
+            @RequestBody @Valid PasswordChangeRequest passwordChangeRequest,
+            HttpServletRequest httpRequest) {
+
+        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+            return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
+        }
+
+        String response = employeeService.changePassword(employeeId, passwordChangeRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/uploadPicture/{employeeId}")
+    public ResponseEntity<String> uploadProfilePicture(
+            @PathVariable Long employeeId,
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest httpRequest) {
+        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+            return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
+        }
+
+        String response = employeeService.uploadProfilePicture(employeeId, file);
         return ResponseEntity.ok(response);
     }
 
