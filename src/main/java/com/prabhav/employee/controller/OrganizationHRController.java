@@ -49,13 +49,19 @@ public class OrganizationHRController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/getAll")
-    public ResponseEntity<List<OrganizationHRResponse>> getAllHrContacts(HttpServletRequest httpRequest) {
+    public ResponseEntity<List<OrganizationHRResponse>> getAllHrContacts(
+            @PathVariable Long organizationId,
+            HttpServletRequest httpRequest) {
         if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
             return ResponseEntity.status(401).body(null);
         }
-        List<OrganizationHRResponse> hrContacts = organizationHRService.getAllHrContacts();
+        List<OrganizationHRResponse> hrContacts = organizationHRService.getAllHrContacts(organizationId);
+        if (hrContacts.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
         return ResponseEntity.ok(hrContacts);
     }
+
 
     @PutMapping("/update/{hrId}")
     public ResponseEntity<String> updateHrContact(

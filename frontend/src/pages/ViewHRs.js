@@ -6,6 +6,14 @@ const ViewHRs = () => {
     const { organizationId } = useParams();
     const navigate = useNavigate();
     const [hrList, setHrList] = useState([]);
+    const [organizationName, setOrganizationName] = useState('');  
+    const [editingHrId, setEditingHrId] = useState(null); 
+    const [editFormData, setEditFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        contactNumber: '',
+    });
 
     useEffect(() => {
         const token = localStorage.getItem('user');
@@ -13,9 +21,23 @@ const ViewHRs = () => {
             navigate('/login');
         }
 
+        const fetchOrganizationDetails = async () => {
+            try {
+                const response = await axios.get(`http://localhost:9192/api/v1/organizations/getAll`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const organization = response.data.find((org) => org.id === parseInt(organizationId));
+                if (organization) {
+                    setOrganizationName(organization.name);  // Set the organization name
+                }
+            } catch (error) {
+                console.error('Failed to fetch organization details:', error);
+            }
+        };
+
         const fetchHRs = async () => {
             try {
-                const response = await axios.get(`http://localhost:9192/api/v1/organizations/getHRsByOrganizationId/${organizationId}`, {
+                const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getAll`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setHrList(response.data);
@@ -24,33 +46,140 @@ const ViewHRs = () => {
             }
         };
 
-        fetchHRs();
+        fetchOrganizationDetails(); 
+        fetchHRs(); 
+
     }, [organizationId, navigate]);
+
+    const handleEditClick = (hr) => {
+        setEditingHrId(hr.id);
+        setEditFormData(hr);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingHrId(null);
+        setEditFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            contactNumber: '',
+        });
+    };
+
+    const handleEditFormChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleEditFormSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('user');
+    
+        try {
+            const payload = {
+                first_name: editFormData.firstName,
+                last_name: editFormData.lastName,
+                email: editFormData.email,
+                contact_number: editFormData.contactNumber,
+            };
+            
+            const response = await axios.put(
+                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/update/${editingHrId}`,
+                payload, 
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            
+            if (response.status === 200 || response.status === 204) {
+                setHrList((prevList) =>
+                    prevList.map((hr) => (hr.id === editingHrId ? { ...hr, ...editFormData } : hr))
+                );
+                handleCancelEdit(); 
+            } else {
+                console.error('Unexpected response status:', response.status);
+            }
+        } catch (error) {
+            console.error('Failed to update HR details:', error.response?.data || error.message);
+        }
+    };
 
     return (
         <div>
-            <h1>HRs for Organization ID: {organizationId}</h1>
+            <h1>HRs for Organization: {organizationName}</h1> 
             <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Contact Number</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {hrList.map((hr) => (
-                        <tr key={hr.id}>
-                            <td>{hr.firstName}</td>
-                            <td>{hr.lastName}</td>
-                            <td>{hr.email}</td>
-                            <td>{hr.contactNumber}</td>
+            {hrList.length === 0 ? (
+                <h3>No HR records have been found. Please add HR details to continue.</h3>
+            ) : (
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Contact Number</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {hrList.map((hr) => (
+                            <tr key={hr.id}>
+                                {editingHrId === hr.id ? (
+                                    <>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="firstName"
+                                                value={editFormData.firstName}
+                                                onChange={handleEditFormChange}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="lastName"
+                                                value={editFormData.lastName}
+                                                onChange={handleEditFormChange}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={editFormData.email}
+                                                onChange={handleEditFormChange}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="contactNumber"
+                                                value={editFormData.contactNumber}
+                                                onChange={handleEditFormChange}
+                                            />
+                                        </td>
+                                        <td>
+                                            <button onClick={handleEditFormSubmit}>Save</button>
+                                            <button onClick={handleCancelEdit}>Cancel</button>
+                                        </td>
+                                    </>
+                                ) : (
+                                    <>
+                                        <td>{hr.firstName}</td>
+                                        <td>{hr.lastName}</td>
+                                        <td>{hr.email}</td>
+                                        <td>{hr.contactNumber}</td>
+                                        <td>
+                                            <button onClick={() => handleEditClick(hr)}>Edit</button>
+                                        </td>
+                                    </>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };

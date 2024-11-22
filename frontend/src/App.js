@@ -5,8 +5,9 @@ import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Profile from './pages/Profile'; 
 import AddOrganization from './pages/AddOrganization'; 
-import AddHr from './pages/AddHr'; 
-import ViewHRs from './pages/ViewHRs'
+import AddHr from './pages/AddHR'; 
+import ViewHRs from './pages/ViewHRs';
+
 const App = () => {
   return (
     <Router>
@@ -28,7 +29,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        {/* New Route for Add Organization */}
         <Route
           path="/add-organization"
           element={
@@ -37,7 +37,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        {/* New Route for Add HR */}
         <Route
           path="/add-hr/:organizationId"
           element={
@@ -46,7 +45,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/view-hrs/:organizationId"
           element={
@@ -55,7 +53,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-
       </Routes>
     </Router>
   );

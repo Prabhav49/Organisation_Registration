@@ -42,10 +42,16 @@ public class OrganizationHRService {
         return hrContactOpt.map(organizationHRMapper::toResponse).orElse(null);
     }
 
-    public List<OrganizationHRResponse> getAllHrContacts() {
-        List<OrganizationHR> hrContacts = organizationHRRepo.findAll();
+    public List<OrganizationHRResponse> getAllHrContacts(Long organizationId) {
+        Optional<Organization> organizationOpt = organizationRepo.findById(organizationId);
+        if (organizationOpt.isEmpty()) {
+            throw new IllegalArgumentException("Organization not found for ID: " + organizationId);
+        }
+
+        List<OrganizationHR> hrContacts = organizationHRRepo.findByOrganization_Id(organizationId);
         return organizationHRMapper.toResponse(hrContacts);
     }
+
 
     public String updateHrContact(Long hrId, Long organizationId, OrganizationHRUpdateRequest updateRequest) {
         Optional<OrganizationHR> hrContactOpt = organizationHRRepo.findByIdAndOrganization_Id(hrId, organizationId);
