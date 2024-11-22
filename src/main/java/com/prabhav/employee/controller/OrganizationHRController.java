@@ -33,21 +33,23 @@ public class OrganizationHRController {
         return ResponseEntity.status(200).body(response);
     }
 
-    @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<OrganizationHRResponse> getHrContactByEmail(
-            @PathVariable String email,
+    @GetMapping("/getHrsByName/{name}")
+    public ResponseEntity<List<OrganizationHRResponse>> getHrsByName(
+            @PathVariable String name,
             @PathVariable Long organizationId,
             HttpServletRequest httpRequest) {
 
         if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
             return ResponseEntity.status(401).body(null);
         }
-        OrganizationHRResponse response = organizationHRService.getHrContactByEmail(email, organizationId);
-        if (response == null) {
+
+        List<OrganizationHRResponse> response = organizationHRService.getHrsByName(name, organizationId);
+        if (response.isEmpty()) {
             return ResponseEntity.status(404).body(null);
         }
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<OrganizationHRResponse>> getAllHrContacts(
             @PathVariable Long organizationId,
@@ -61,7 +63,6 @@ public class OrganizationHRController {
         }
         return ResponseEntity.ok(hrContacts);
     }
-
 
     @PutMapping("/update/{hrId}")
     public ResponseEntity<String> updateHrContact(
@@ -81,7 +82,6 @@ public class OrganizationHRController {
 
         return ResponseEntity.ok(response);
     }
-
 
     @DeleteMapping("/delete/{hrId}")
     public ResponseEntity<String> deleteHrContact(

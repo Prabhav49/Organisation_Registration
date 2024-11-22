@@ -10,10 +10,11 @@ import java.util.Optional;
 @Repository
 public interface OrganizationHRRepo extends JpaRepository<OrganizationHR, Long> {
 
-    // Find HR contact by email
-    Optional<OrganizationHR> findByEmail(String email);
-    Optional<OrganizationHR> findByEmailAndOrganization_Id(String email, Long organizationId);
-    Optional<OrganizationHR> findByIdAndOrganization_Id(Long hrId, Long organizationId);
-    List<OrganizationHR> findByOrganization_Id(Long organizationId);
+    // Updated method to search by both organization name and organization ID
+    List<OrganizationHR> findByOrganization_NameAndOrganization_Id(String name, Long organizationId);
 
+    // Other existing methods
+    Optional<OrganizationHR> findByIdAndOrganization_Id(Long hrId, Long organizationId);
+
+    List<OrganizationHR> findByOrganization_Id(Long organizationId);
 }
