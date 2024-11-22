@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const AddHR = () => {
-    const { organizationId } = useParams();
+const AddHR = ({ onAddHR, organizationId }) => {
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -18,12 +17,18 @@ const AddHR = () => {
         }
 
         try {
-            await axios.post(
+            const response = await axios.post(
                 `http://localhost:9192/api/v1/organizations/${organizationId}/hr/add`,
                 { firstName, lastName, email, contactNumber },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            navigate('/dashboard');
+
+            if (response.status === 200) {
+                onAddHR();
+            } else {
+                console.log(organizationId)
+                console.error('Error adding HR:', response.statusText);
+            }
         } catch (error) {
             console.error('Failed to add HR:', error);
         }
@@ -53,7 +58,7 @@ const AddHR = () => {
             </label>
             <br />
             <button onClick={handleAddHR}>Submit</button>
-            <button onClick={() => navigate('/dashboard')}>Cancel</button>
+            <button onClick={() => onAddHR()}>Cancel</button>
         </div>
     );
 };

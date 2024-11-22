@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const ViewHRs = () => {
-    const { organizationId } = useParams();
+const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
     const [hrList, setHrList] = useState([]);
-    const [organizationName, setOrganizationName] = useState('');  
-    const [editingHrId, setEditingHrId] = useState(null); 
+    const [organizationName, setOrganizationName] = useState('');
+    const [editingHrId, setEditingHrId] = useState(null);
     const [editFormData, setEditFormData] = useState({
         firstName: '',
         lastName: '',
@@ -28,7 +27,7 @@ const ViewHRs = () => {
                 });
                 const organization = response.data.find((org) => org.id === parseInt(organizationId));
                 if (organization) {
-                    setOrganizationName(organization.name);  // Set the organization name
+                    setOrganizationName(organization.name);
                 }
             } catch (error) {
                 console.error('Failed to fetch organization details:', error);
@@ -46,9 +45,8 @@ const ViewHRs = () => {
             }
         };
 
-        fetchOrganizationDetails(); 
-        fetchHRs(); 
-
+        fetchOrganizationDetails();
+        fetchHRs();
     }, [organizationId, navigate]);
 
     const handleEditClick = (hr) => {
@@ -77,7 +75,7 @@ const ViewHRs = () => {
     const handleEditFormSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('user');
-    
+
         try {
             const payload = {
                 first_name: editFormData.firstName,
@@ -85,18 +83,18 @@ const ViewHRs = () => {
                 email: editFormData.email,
                 contact_number: editFormData.contactNumber,
             };
-            
+
             const response = await axios.put(
                 `http://localhost:9192/api/v1/organizations/${organizationId}/hr/update/${editingHrId}`,
-                payload, 
+                payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            
+
             if (response.status === 200 || response.status === 204) {
                 setHrList((prevList) =>
                     prevList.map((hr) => (hr.id === editingHrId ? { ...hr, ...editFormData } : hr))
                 );
-                handleCancelEdit(); 
+                handleCancelEdit();
             } else {
                 console.error('Unexpected response status:', response.status);
             }
@@ -105,10 +103,33 @@ const ViewHRs = () => {
         }
     };
 
+    const handleDeleteClick = async (hrId) => {
+        const token = localStorage.getItem('user');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (!window.confirm('Are you sure you want to delete the HR information?')) return;
+        try {
+            const response = await axios.delete(
+                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/delete/${hrId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.status === 200) {
+                setHrList((prevList) => prevList.filter((hr) => hr.id !== hrId));
+            } else {
+                console.error('Failed to delete HR:', response.status);
+            }
+        } catch (error) {
+            console.error('Error deleting HR:', error.response?.data || error.message);
+        }
+    };
+
     return (
         <div>
-            <h1>HRs for Organization: {organizationName}</h1> 
-            <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
+            <h1>HRs for Organization: {organizationName}</h1>
+            <button onClick={() => onViewHRs()}>Back to Dashboard</button>
             {hrList.length === 0 ? (
                 <h3>No HR records have been found. Please add HR details to continue.</h3>
             ) : (
@@ -172,6 +193,7 @@ const ViewHRs = () => {
                                         <td>{hr.contactNumber}</td>
                                         <td>
                                             <button onClick={() => handleEditClick(hr)}>Edit</button>
+                                            <button onClick={() => handleDeleteClick(hr.id)}>Delete</button>
                                         </td>
                                     </>
                                 )}

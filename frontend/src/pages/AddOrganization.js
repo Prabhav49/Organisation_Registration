@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { wait } from '@testing-library/user-event/dist/utils';
 
-const AddOrganization = () => {
-    const navigate = useNavigate();
+const AddOrganization = ({ onAddOrganization }) => { 
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
 
     const handleAddOrganization = async () => {
         const token = localStorage.getItem('user');
         if (!token) {
-            navigate('/login');
+            alert('Please log in first.');
             return;
         }
 
@@ -20,9 +19,11 @@ const AddOrganization = () => {
                 { name, address },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            navigate('/dashboard');
+            wait(100);
+            onAddOrganization(); 
         } catch (error) {
             console.error('Failed to add organization:', error);
+            alert('Failed to add organization. Please try again.');
         }
     };
 
@@ -40,7 +41,7 @@ const AddOrganization = () => {
             </label>
             <br />
             <button onClick={handleAddOrganization}>Submit</button>
-            <button onClick={() => navigate('/dashboard')}>Cancel</button>
+            <button onClick={() => onAddOrganization()}>Cancel</button>
         </div>
     );
 };

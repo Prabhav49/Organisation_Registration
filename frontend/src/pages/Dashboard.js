@@ -3,11 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import AddOrganization from './AddOrganization';
+import Profile from './Profile'; 
+import AddHR from './AddHR';
+import ViewHRs from './ViewHRs';
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [organizations, setOrganizations] = useState([]);
+    const [showAddOrganization, setShowAddOrganization] = useState(false);
+    const [showProfile, setShowProfile] = useState(false); 
+    const [showAddHR, setShowAddHR] = useState(false); 
+    const [showViewHRs, setshowViewHRs] = useState(false); 
+    const [selectedOrganizationId, setSelectedOrganizationId] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('user');
@@ -48,8 +57,7 @@ const Dashboard = () => {
             });
 
             if (response.status === 200) {
-                alert('Organization deleted successfully!');
-                fetchOrganizations(token); // Refresh the list after deletion
+                fetchOrganizations(token);
             }
         } catch (error) {
             console.error('Failed to delete organization:', error);
@@ -64,37 +72,66 @@ const Dashboard = () => {
         navigate('/login');
     };
 
-    return (
+    const handleOrganizationAdded = () => {
+        const token = localStorage.getItem('user');
+        fetchOrganizations(token);
+        setShowAddOrganization(false);
+    };
+
+    const handleAddHR = (organizationId) => {
+        setSelectedOrganizationId(organizationId);
+        setShowAddHR(true); 
+    };
+    const handleViewHRs = (organizationId) => {
+        setSelectedOrganizationId(organizationId);
+        setshowViewHRs(true); 
+    }
+     return (
         <div>
             <h1>Dashboard</h1>
-            <button onClick={() => navigate('/profile')}>Profile</button>
-            <button onClick={() => navigate('/add-organization')}>Add Organization</button>
+            <button onClick={() => setShowProfile(!showProfile)}>Profile</button>
+            <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
             <button onClick={handleLogout}>Logout</button>
-            <div>
-                <h2>Organizations</h2>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {organizations.map((org) => (
-                            <tr key={org.id}>
-                                <td>{org.name}</td>
-                                <td>{org.address}</td>
-                                <td>
-                                    <button onClick={() => navigate(`/add-hr/${org.id}`)}>Add HR</button>
-                                    <button onClick={() => navigate(`/view-hrs/${org.id}`)}>View HRs</button>
-                                    <button onClick={() => handleDelete(org.id)}>Delete</button>
-                                </td>
+    
+            {showProfile ? (
+                <Profile />
+            ) : showAddOrganization ? (
+                <AddOrganization onAddOrganization={handleOrganizationAdded} />
+            ) : showAddHR ? (
+                <AddHR 
+                    onAddHR={() => setShowAddHR(false)} 
+                    organizationId={selectedOrganizationId} 
+                />
+            ) : showViewHRs? (<ViewHRs 
+                onViewHRs={() => setshowViewHRs(false)} 
+                organizationId={selectedOrganizationId} 
+                />) : (
+                <div>
+                    <h2>Organizations</h2>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {organizations.map((org) => (
+                                <tr key={org.id}>
+                                    <td>{org.name}</td>
+                                    <td>{org.address}</td>
+                                    <td>
+                                        <button onClick={() => handleAddHR(org.id)}>Add HR</button>
+                                        <button onClick={() => handleViewHRs(org.id)}>View HRs</button>
+                                        <button onClick={() => handleDelete(org.id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 };

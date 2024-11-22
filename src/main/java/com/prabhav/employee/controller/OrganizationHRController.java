@@ -30,7 +30,7 @@ public class OrganizationHRController {
             return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
         }
         String response = organizationHRService.addHrContact(organizationId, request);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(200).body(response);
     }
 
     @GetMapping("/getByEmail/{email}")

@@ -28,7 +28,7 @@ public class OrganizationHRService {
             return "Organization not found";
         }
         Organization organization = organizationOpt.get();
-        OrganizationHR hrContact = organizationHRMapper.toEntity(request, organization); // Pass organization here
+        OrganizationHR hrContact = organizationHRMapper.toEntity(request, organization);
         organizationHRRepo.save(hrContact);
         return "HR contact added successfully";
     }

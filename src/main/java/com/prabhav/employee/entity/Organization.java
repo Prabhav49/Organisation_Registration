@@ -25,7 +25,7 @@ public class Organization {
 
     @Column(name = "address", nullable = false)
     @NotBlank(message = "Address cannot be blank")
-    @Size(min = 5, max = 255, message = "Address must be between 5 and 255 characters")
+    @Size(min = 3, max = 255, message = "Address must be between 5 and 255 characters")
     private String address;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
