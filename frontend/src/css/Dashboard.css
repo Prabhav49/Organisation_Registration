@@ -1,0 +1,117 @@
+/* Color Palette */
+:root {
+  --primary-bg: #f4f4f9;
+  --primary-text: #333;
+  --secondary-bg: #6200ea;
+  --secondary-text: #ffffff;
+  --border-color: #ddd;
+  --hover-bg: #3700b3;
+}
+
+.dashboard {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+button {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px; /* Adds spacing between buttons */
+}
+
+button:last-child {
+  margin-right: 0; /* Removes margin for the last button */
+}
+
+button:hover {
+  background-color: var(--hover-bg);
+}
+
+.organizations {
+  margin-top: 20px;
+}
+
+.organization-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.organization-table th,
+.organization-table td {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  text-align: left;
+}
+
+.organization-table tr:hover {
+  background-color: var(--primary-bg);
+}
+.delete-btn-org {
+  background-color: #dc3545; /* Red background */
+  color: #fff; /* White text */
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-btn-org:hover {
+  background-color: #c82333; 
+}
+
+.organization-table th {
+  background-color: var(--secondary-bg); 
+  color: var(--secondary-text);
+  font-weight: bold; 
+  text-transform: uppercase; 
+  padding: 12px; 
+  border: 1px solid var(--border-color); 
+}
+
+.delete-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-actions button {
+  margin: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.modal-actions button:hover {
+  opacity: 0.8;
+}

@@ -1,0 +1,140 @@
+.profile-container {
+    width: 100vw;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    overflow-y: auto; 
+}
+
+.profile-heading {
+    text-align: center;
+    color: #41729f;
+    margin-bottom: 20px;
+}
+
+.profile-layout {
+    display: flex;
+    flex: 1;  
+    overflow: hidden;
+}
+
+.profile-info {
+    flex: 0 0 30%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    /* overflow-y: auto;  */
+    max-height: 85vh;
+}
+
+.profile-picture-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.employee-details p {
+    margin: 10px 0;
+}
+
+.delete-btn-profile {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.delete-btn-profile:hover {
+    background-color: #d11a1a;
+}
+
+.profile-update {
+    flex: 1;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* overflow-y: auto; Make this section scrollable */
+    max-height: 88vh;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.input-group button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.update-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.upload-btn {
+    background-color: #1E90FF;
+    color: white;
+}
+
+.password-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.update-btn:hover, .upload-btn:hover, .password-btn:hover {
+    opacity: 0.8;
+}
+
+.upload-section,
+.change-password-section {
+    margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+    .profile-layout {
+        flex-direction: column;
+    }
+
+    .profile-info {
+        flex: none;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .profile-update {
+        flex: none;
+        width: 100%;
+    }
+}

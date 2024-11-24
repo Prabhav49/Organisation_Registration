@@ -1,0 +1,121 @@
+.view-hrs {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #333;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.back-btn {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+}
+
+.search-bar button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #218838;
+}
+
+.hr-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.hr-table th, .hr-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.hr-table th {
+    background-color: var(--secondary-bg); 
+    color: var(--secondary-text);
+    font-weight: bold; 
+    text-transform: uppercase; 
+    padding: 12px; 
+    border: 1px solid var(--border-color); 
+  }
+
+hr-table input {
+    padding: 5px;
+}
+
+.edit-btn, .delete-btn {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+.delete-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.modal-content button {
+    margin: 10px;
+}

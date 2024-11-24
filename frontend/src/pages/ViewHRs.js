@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../css/ViewHRs.css'
 
 const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
@@ -14,7 +15,9 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         contactNumber: '',
     });
     const [emailToSearch, setEmailToSearch] = useState('');
-    const [searchedHr, setSearchedHr] = useState(null); // New state to hold HR details fetched by email
+    const [searchedHr, setSearchedHr] = useState(null); 
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [hrToDelete, setHrToDelete] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('user');
@@ -105,27 +108,37 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         }
     };
 
-    const handleDeleteClick = async (hrId) => {
+    const handleDeleteClick = (hrId) => {
+        setHrToDelete(hrId);
+        setShowDeleteConfirmation(true);
+    };
+
+    const handleDeleteConfirm = async () => {
         const token = localStorage.getItem('user');
         if (!token) {
             navigate('/login');
             return;
         }
-        if (!window.confirm('Are you sure you want to delete the HR information?')) return;
         try {
             const response = await axios.delete(
-                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/delete/${hrId}`,
+                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/delete/${hrToDelete}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.status === 200) {
-                setHrList((prevList) => prevList.filter((hr) => hr.id !== hrId));
+                setHrList((prevList) => prevList.filter((hr) => hr.id !== hrToDelete));
             } else {
                 console.error('Failed to delete HR:', response.status);
             }
+            setShowDeleteConfirmation(false);
         } catch (error) {
             console.error('Error deleting HR:', error.response?.data || error.message);
+            setShowDeleteConfirmation(false);
         }
+    };
+
+    const handleDeleteCancel = () => {
+        setShowDeleteConfirmation(false);
     };
 
     const handleSearchByEmail = async () => {
@@ -143,16 +156,16 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             setSearchedHr(response.data);
         } catch (error) {
             console.error('Error fetching HR by email:', error.response?.data || error.message);
-            setSearchedHr(null); // Reset if error occurs
+            setSearchedHr(null); 
         }
     };
 
     return (
-        <div>
+        <div className="view-hrs">
             <h1>HRs for Organization: {organizationName}</h1>
-            <button onClick={() => onViewHRs()}>Back to Dashboard</button>
+            <button className="back-btn" onClick={() => onViewHRs()}>Back to Dashboard</button>
 
-            <div>
+            <div className="search-bar">
                 <input
                     type="email"
                     placeholder="Search HR by email"
@@ -163,8 +176,9 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             </div>
 
             {searchedHr ? (
-                <div>
+                <div className="searched-hr">
                     <h3>HR Details:</h3>
+                    <p>HR Unique ID: {searchedHr.id}</p>
                     <p>First Name: {searchedHr.firstName}</p>
                     <p>Last Name: {searchedHr.lastName}</p>
                     <p>Email: {searchedHr.email}</p>
@@ -177,9 +191,10 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             {hrList.length === 0 ? (
                 <h3>No HR records have been found. Please add HR details to continue.</h3>
             ) : (
-                <table border="1">
+                <table className="hr-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
@@ -231,13 +246,14 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                                     </>
                                 ) : (
                                     <>
+                                        <td>{hr.id}</td>
                                         <td>{hr.firstName}</td>
                                         <td>{hr.lastName}</td>
                                         <td>{hr.email}</td>
                                         <td>{hr.contactNumber}</td>
                                         <td>
-                                            <button onClick={() => handleEditClick(hr)}>Edit</button>
-                                            <button onClick={() => handleDeleteClick(hr.id)}>Delete</button>
+                                            <button className="edit-btn" onClick={() => handleEditClick(hr)}>Edit</button>
+                                            <button className="delete-btn" onClick={() => handleDeleteClick(hr.id)}>Delete</button>
                                         </td>
                                     </>
                                 )}
@@ -245,6 +261,17 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirmation && (
+                <div className="delete-confirmation-modal">
+                    <div className="modal-content">
+                        <p>Are you sure you want to delete this HR?</p>
+                        <button onClick={handleDeleteConfirm}>Yes</button>
+                        <button onClick={handleDeleteCancel}>No</button>
+                    </div>
+                </div>
             )}
         </div>
     );

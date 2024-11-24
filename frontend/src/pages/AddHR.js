@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../css/AddHR.css'
 
 const AddHR = ({ onAddHR, organizationId }) => {
     const navigate = useNavigate();
@@ -26,7 +27,6 @@ const AddHR = ({ onAddHR, organizationId }) => {
             if (response.status === 200) {
                 onAddHR();
             } else {
-                console.log(organizationId)
                 console.error('Error adding HR:', response.statusText);
             }
         } catch (error) {
@@ -35,30 +35,60 @@ const AddHR = ({ onAddHR, organizationId }) => {
     };
 
     return (
-        <div>
+        <div className="add-hr-container">
             <h1>Add HR</h1>
-            <label>
-                First Name:
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-            </label>
-            <br />
-            <label>
-                Last Name:
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-            </label>
-            <br />
-            <label>
-                Email:
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </label>
-            <br />
-            <label>
-                Contact Number:
-                <input type="text" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} />
-            </label>
-            <br />
-            <button onClick={handleAddHR}>Submit</button>
-            <button onClick={() => onAddHR()}>Cancel</button>
+            <div className="form-group">
+                <label>
+                    First Name:
+                    <input 
+                        type="text" 
+                        value={firstName} 
+                        onChange={(e) => setFirstName(e.target.value)} 
+                        placeholder="Enter first name"
+                    />
+                </label>
+            </div>
+
+            <div className="form-group">
+                <label>
+                    Last Name:
+                    <input 
+                        type="text" 
+                        value={lastName} 
+                        onChange={(e) => setLastName(e.target.value)} 
+                        placeholder="Enter last name"
+                    />
+                </label>
+            </div>
+
+            <div className="form-group">
+                <label>
+                    Email:
+                    <input 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        placeholder="Enter email"
+                    />
+                </label>
+            </div>
+
+            <div className="form-group">
+                <label>
+                    Contact Number:
+                    <input 
+                        type="text" 
+                        value={contactNumber} 
+                        onChange={(e) => setContactNumber(e.target.value)} 
+                        placeholder="Enter contact number"
+                    />
+                </label>
+            </div>
+
+            <div className="button-container">
+                <button className="submit-btn" onClick={handleAddHR}>Submit</button>
+                <button className="cancel-btn" onClick={() => onAddHR()}>Cancel</button>
+            </div>
         </div>
     );
 };

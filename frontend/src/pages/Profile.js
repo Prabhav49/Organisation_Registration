@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import '../css/Profile.css';
 
 const Profile = () => {
     const [employee, setEmployee] = useState(null);
@@ -20,9 +21,8 @@ const Profile = () => {
         }
 
         try {
-            const decoded = jwtDecode(token); // Decoding JWT
-            const email = decoded.sub; // Use the 'sub' field for email
-            console.log('Decoded Token:', decoded);
+            const decoded = jwtDecode(token);
+            const email = decoded.sub;
 
             axios
                 .get(`http://localhost:9192/api/v1/employees/getEmployeeInfo/${email}`, {
@@ -59,10 +59,10 @@ const Profile = () => {
 
     const handleProfilePictureUpload = () => {
         if (!profilePicture || !employee) return;
-    
+
         const formData = new FormData();
         formData.append('file', profilePicture);
-    
+
         axios
             .post(`http://localhost:9192/api/v1/employees/uploadProfilePicture/${employee.employee_id}`, formData, {
                 headers: {
@@ -71,7 +71,6 @@ const Profile = () => {
                 },
             })
             .then((response) => {
-                console.log('Upload Response:', response.data);
                 alert(response.data.message || 'Profile picture uploaded successfully!');
             })
             .catch((error) => {
@@ -117,17 +116,17 @@ const Profile = () => {
             alert('All fields are required!');
             return;
         }
-    
+
         if (newPassword !== confirmPassword) {
             alert('New passwords do not match!');
             return;
         }
-    
+
         if (newPassword.length < 6) {
-            alert('New password must be at least 8 characters long!');
+            alert('New password must be at least 6 characters long!');
             return;
         }
-    
+
         axios
             .put(
                 `http://localhost:9192/api/v1/employees/changePassword/${employee.employee_id}`,
@@ -146,7 +145,6 @@ const Profile = () => {
             })
             .catch((error) => {
                 console.error(error);
-    
                 if (error.response && error.response.status === 401) {
                     alert('Old password is incorrect');
                 } else {
@@ -154,93 +152,97 @@ const Profile = () => {
                 }
             });
     };
-    
-    
+
     if (!employee) {
         return <p>Loading...</p>;
     }
 
     return (
-        <div>
-            <h1>Profile</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <img
-                    src={employee.photograph_path ? `http://localhost:9192${employee.photograph_path}` : '/default-profile.png'}
-                    alt="Profile"
-                    style={{
-                        width: '100px',
-                        height: '100px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                    }}
-                />
-                <div>
-                    <p><strong>First Name:</strong> {employee.first_name}</p>
-                    <p><strong>Last Name:</strong> {employee.last_name}</p>
-                    <p><strong>Email:</strong> {employee.email}</p>
-                    <p><strong>Title:</strong> {employee.title || 'N/A'}</p>
+        <div className="profile-container">
+            <div className="profile-layout">
+                <div className="profile-info">
+                    <h1 className="profile-heading">Profile</h1>
+                    <div className="profile-picture-container">
+                    
+                        <img
+                            src={employee.photograph_path ? `http://localhost:9192${employee.photograph_path}` : '/default-profile.png'}
+                            alt="Profile"
+                            className="profile-picture"
+                        />
+                    </div>
+                    <div className="employee-details">
+                        <p><strong>First Name:</strong> {employee.first_name}</p>
+                        <p><strong>Last Name:</strong> {employee.last_name}</p>
+                        <p><strong>Email:</strong> {employee.email}</p>
+                        <p><strong>Title:</strong> {employee.title || 'N/A'}</p>
+                    </div>
+                    <button className="delete-btn-profile" onClick={handleDelete}>Delete Account</button>
+                </div>
+
+                <div className="profile-update">
+                    <div className="update-section">
+                        <h2>Update Profile</h2>
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                name="first_name"
+                                placeholder="First Name"
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="text"
+                                name="last_name"
+                                placeholder="Last Name"
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="Title"
+                                onChange={handleInputChange}
+                            />
+                            <button className="update-btn" onClick={handleUpdate}>Update</button>
+                        </div>
+                    </div>
+
+                    <div className="upload-section">
+                        <h2>Upload Profile Picture</h2>
+                        <div className="input-group">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            <button className="upload-btn" onClick={handleProfilePictureUpload}>Upload</button>
+                        </div>
+                    </div>
+
+                    <div className="change-password-section">
+                        <h2>Change Password</h2>
+                        <div className="input-group">
+                            <input
+                                type="password"
+                                placeholder="Old Password"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                            />
+                            <input
+                                type="password"
+                                placeholder="New Password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                            />
+                            <input
+                                type="password"
+                                placeholder="Confirm New Password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            <button className="password-btn" onClick={handleChangePassword}>Change Password</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <h2>Update Profile</h2>
-            <div>
-                <input
-                    type="text"
-                    name="first_name"
-                    placeholder="First Name"
-                    onChange={handleInputChange}
-                />
-                <input
-                    type="text"
-                    name="last_name"
-                    placeholder="Last Name"
-                    onChange={handleInputChange}
-                />
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Title"
-                    onChange={handleInputChange}
-                />
-                <button onClick={handleUpdate}>Update</button>
-            </div>
-
-            <h2>Upload Profile Picture</h2>
-            <div>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                />
-                <button onClick={handleProfilePictureUpload}>Upload</button>
-            </div>
-
-            <h2>Change Password</h2>
-            <div>
-                <input
-                    type="password"
-                    placeholder="Old Password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Confirm New Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <button onClick={handleChangePassword}>Change Password</button>
-            </div>
-
-            <button onClick={handleDelete} style={{ marginTop: '1rem', color: 'red' }}>
-                Delete Account
-            </button>
         </div>
     );
 };
