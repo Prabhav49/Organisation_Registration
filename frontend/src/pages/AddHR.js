@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import validateForm from '../utils/validation'; // Import validation utility
+import { validateHRForm } from '../utils/ValidationHR'; 
 import '../css/AddHR.css';
 
 const AddHR = ({ onAddHR, organizationId }) => {
@@ -10,7 +10,7 @@ const AddHR = ({ onAddHR, organizationId }) => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [contactNumber, setContactNumber] = useState('');
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState({}); 
 
     const handleAddHR = async () => {
         const token = localStorage.getItem('user');
@@ -19,10 +19,9 @@ const AddHR = ({ onAddHR, organizationId }) => {
             return;
         }
 
-        // Validate form fields
-        const validationErrors = validateForm({ firstName, lastName, email, contactNumber });
+        const validationErrors = await validateHRForm(firstName, lastName, email, contactNumber, organizationId,token);
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+            setErrors(validationErrors); 
             return;
         }
 
@@ -46,65 +45,62 @@ const AddHR = ({ onAddHR, organizationId }) => {
     return (
         <div className="add-hr-container">
             <h1>Add HR</h1>
+
             <div className="form-group">
                 <label>
                     First Name:
-                    <input
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                    <input 
+                        type="text" 
+                        value={firstName} 
+                        onChange={(e) => setFirstName(e.target.value)} 
                         placeholder="Enter first name"
                     />
-                    {errors.firstName && <p className="error-message">{errors.firstName}</p>}
                 </label>
+                {errors.firstName && <p className="error-text">{errors.firstName}</p>}
             </div>
 
             <div className="form-group">
                 <label>
                     Last Name:
-                    <input
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                    <input 
+                        type="text" 
+                        value={lastName} 
+                        onChange={(e) => setLastName(e.target.value)} 
                         placeholder="Enter last name"
                     />
-                    {errors.lastName && <p className="error-message">{errors.lastName}</p>}
                 </label>
+                {errors.lastName && <p className="error-text">{errors.lastName}</p>}
             </div>
 
             <div className="form-group">
                 <label>
                     Email:
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                    <input 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
                         placeholder="Enter email"
                     />
-                    {errors.email && <p className="error-message">{errors.email}</p>}
                 </label>
+                {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
             <div className="form-group">
                 <label>
                     Contact Number:
-                    <input
-                        type="text"
-                        value={contactNumber}
-                        onChange={(e) => setContactNumber(e.target.value)}
+                    <input 
+                        type="text" 
+                        value={contactNumber} 
+                        onChange={(e) => setContactNumber(e.target.value)} 
                         placeholder="Enter contact number"
                     />
-                    {errors.contactNumber && <p className="error-message">{errors.contactNumber}</p>}
                 </label>
+                {errors.contactNumber && <p className="error-text">{errors.contactNumber}</p>}
             </div>
 
             <div className="button-container">
-                <button className="submit-btn" onClick={handleAddHR}>
-                    Submit
-                </button>
-                <button className="cancel-btn" onClick={() => onAddHR()}>
-                    Cancel
-                </button>
+                <button className="submit-btn" onClick={handleAddHR}>Submit</button>
+                <button className="cancel-btn" onClick={() => onAddHR()}>Cancel</button>
             </div>
         </div>
     );

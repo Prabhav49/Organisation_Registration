@@ -10,10 +10,8 @@ const AddOrganization = ({ onAddOrganization }) => {
     const [loading, setLoading] = useState(false);
 
     const handleAddOrganization = async () => {
-        // Clear previous errors
         setErrors({});
-        
-        // Validate form fields
+    
         const validationErrors = validateAddOrganizationForm(name, address);
         if (Object.values(validationErrors).some((error) => error)) {
             setErrors(validationErrors);

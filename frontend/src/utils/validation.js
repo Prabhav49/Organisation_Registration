@@ -16,7 +16,7 @@ export const validateNotEmpty = (input, fieldName) => {
 };
 
 export const validateContactNumber = (contactNumber) => {
-    if (!contactNumber.trim()) {
+    if (!contactNumber || !contactNumber.trim()) { 
         return 'Contact Number is required.';
     } else if (!/^\d+$/.test(contactNumber)) {
         return 'Contact Number can only contain digits.';
@@ -25,15 +25,17 @@ export const validateContactNumber = (contactNumber) => {
     }
     return null;
 };
-
 export const validateName = (name, fieldName) => {
-    if (!name.trim()) {
+    const nameStr = String(name);
+
+    if (!nameStr.trim()) {
         return `${fieldName} is required.`;
-    } else if (!/^[a-zA-Z]+$/.test(name)) {
+    } else if (!/^[a-zA-Z]+$/.test(nameStr)) {
         return `${fieldName} can only contain letters.`;
     }
     return null;
 };
+
 
 // Login Validation
 export const validateLoginForm = (email, password) => {

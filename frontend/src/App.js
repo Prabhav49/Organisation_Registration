@@ -1,29 +1,32 @@
-// src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import PrivateRoute from './components/PrivateRoute';
-import Profile from './pages/Profile';
-import AddOrganization from './pages/AddOrganization';
-import AddHr from './pages/AddHR';
-import ViewHRs from './pages/ViewHRs';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
+import Profile from "./pages/Profile";
+import AddOrganization from "./pages/AddOrganization";
+import AddHr from "./pages/AddHR";
+import ViewHRs from "./pages/ViewHRs";
 
 const App = () => {
   return (
     <Router>
-                    <Navbar />
+      <Navbar />
       <Routes>
+        {/* Redirect root (/) to /dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+
+        {/* Private routes with protected access */}
         <Route
           path="/login"
           element={<Login />}
         />
+        
         <Route
           path="/*"
           element={
             <>
-
               <Routes>
                 <Route
                   path="/dashboard"

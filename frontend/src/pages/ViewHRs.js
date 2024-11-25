@@ -5,6 +5,7 @@ import '../css/ViewHRs.css'
 
 const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
     const [hrList, setHrList] = useState([]);
     const [organizationName, setOrganizationName] = useState('');
     const [editingHrId, setEditingHrId] = useState(null);
@@ -14,17 +15,15 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         email: '',
         contactNumber: '',
     });
-    const [emailToSearch, setEmailToSearch] = useState('');
-    const [searchedHr, setSearchedHr] = useState(null); 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [hrToDelete, setHrToDelete] = useState(null);
+    const token = localStorage.getItem('user');
 
     useEffect(() => {
-        const token = localStorage.getItem('user');
         if (!token) {
             navigate('/login');
         }
-
+    
         const fetchOrganizationDetails = async () => {
             try {
                 const response = await axios.get(`http://localhost:9192/api/v1/organizations/getAll`, {
@@ -38,7 +37,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                 console.error('Failed to fetch organization details:', error);
             }
         };
-
+    
         const fetchHRs = async () => {
             try {
                 const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getAll`, {
@@ -49,11 +48,22 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                 console.error('Failed to fetch HRs:', error);
             }
         };
-
+    
         fetchOrganizationDetails();
         fetchHRs();
-    }, [organizationId, navigate]);
+    }, [organizationId, navigate, token]); // No need to include fetchHRs as it's now inline
+    
 
+    const fetchHRs = async () => {
+        try {
+            const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getAll`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setHrList(response.data);
+        } catch (error) {
+            console.error('Failed to fetch HRs:', error);
+        }
+    };
     const handleEditClick = (hr) => {
         setEditingHrId(hr.id);
         setEditFormData(hr);
@@ -141,24 +151,28 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         setShowDeleteConfirmation(false);
     };
 
-    const handleSearchByEmail = async () => {
+    const handleSearchChange = async (e) => {
+        const query = e.target.value.trim();
+        setSearchQuery(query);
+      
         const token = localStorage.getItem('user');
-        if (!token) {
-            navigate('/login');
-            return;
+      
+        if (query.length >= 1) {
+          try {
+            const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getByName/${query}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setHrList(response.data); 
+          } catch (error) {
+            console.error('Failed to fetch organizations:', error);
+          }
+        } else if (query.length === 0) {
+            fetchHRs(token);
+        } else {
+          setHrList([]);
         }
-
-        try {
-            const response = await axios.get(
-                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/getByEmail/${emailToSearch}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setSearchedHr(response.data);
-        } catch (error) {
-            console.error('Error fetching HR by email:', error.response?.data || error.message);
-            setSearchedHr(null); 
-        }
-    };
+      };
+    
 
     return (
         <div className="view-hrs">
@@ -166,27 +180,14 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             <button className="back-btn" onClick={() => onViewHRs()}>Back to Dashboard</button>
 
             <div className="search-bar">
-                <input
-                    type="email"
-                    placeholder="Search HR by email"
-                    value={emailToSearch}
-                    onChange={(e) => setEmailToSearch(e.target.value)}
-                />
-                <button onClick={handleSearchByEmail}>Search</button>
+            <input
+                type="text"
+                placeholder="Search Organization"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="search-bar"
+            />
             </div>
-
-            {searchedHr ? (
-                <div className="searched-hr">
-                    <h3>HR Details:</h3>
-                    <p>HR Unique ID: {searchedHr.id}</p>
-                    <p>First Name: {searchedHr.firstName}</p>
-                    <p>Last Name: {searchedHr.lastName}</p>
-                    <p>Email: {searchedHr.email}</p>
-                    <p>Contact Number: {searchedHr.contactNumber}</p>
-                </div>
-            ) : (
-                <p>No HR found for this email.</p>
-            )}
 
             {hrList.length === 0 ? (
                 <h3>No HR records have been found. Please add HR details to continue.</h3>
@@ -207,6 +208,9 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                             <tr key={hr.id}>
                                 {editingHrId === hr.id ? (
                                     <>
+                                        <td>
+                                            {hr.id}
+                                        </td>
                                         <td>
                                             <input
                                                 type="text"

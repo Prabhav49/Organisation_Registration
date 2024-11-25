@@ -119,3 +119,36 @@ hr-table input {
 .modal-content button {
     margin: 10px;
 }
+
+td input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px; 
+    font-size: 16px; 
+    background-color: #f9f9f9; 
+    color: #333; 
+    box-sizing: border-box; 
+    transition: border 0.3s ease, box-shadow 0.3s ease; 
+}
+
+td input:focus {
+    outline: none; 
+    border: 1px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+td input:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed; 
+}
+
+td input::placeholder {
+    color: #888; 
+    font-style: italic; 
+}
+
+td input + td input {
+    margin-top: 10px; 
+}

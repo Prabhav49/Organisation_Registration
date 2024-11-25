@@ -84,6 +84,12 @@
     background-color: #999;
 }
 
+.error-text {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 600px) {
     .button-container {
         flex-direction: column;
