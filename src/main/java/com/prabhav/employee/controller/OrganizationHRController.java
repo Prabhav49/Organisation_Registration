@@ -30,8 +30,9 @@ public class OrganizationHRController {
             return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
         }
         String response = organizationHRService.addHrContact(organizationId, request);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(200).body(response);
     }
+
 
     @GetMapping("/getByEmail/{email}")
     public ResponseEntity<OrganizationHRResponse> getHrContactByEmail(
@@ -46,6 +47,23 @@ public class OrganizationHRController {
         if (response == null) {
             return ResponseEntity.status(404).body(null);
         }
+        return ResponseEntity.status(200).body(response);
+    }
+    @GetMapping("/getByName/{name}")
+    public ResponseEntity<List<OrganizationHRResponse>> getHrContactByName(
+            @PathVariable String name,
+            @PathVariable Long organizationId,
+            HttpServletRequest httpRequest) {
+
+        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+            return ResponseEntity.status(401).body(null);
+        }
+
+        List<OrganizationHRResponse> response = organizationHRService.getHrContactByName(name, organizationId);
+        if (response.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
         return ResponseEntity.ok(response);
     }
     @GetMapping("/getAll")

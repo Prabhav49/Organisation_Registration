@@ -82,32 +82,6 @@ public class EmployeeService {
         }
     }
 
-    public String uploadProfilePicture(Long employeeId, MultipartFile file) {
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        // Define the directory to save images
-        String uploadDir = System.getProperty("user.dir") + "/public/images/profiles/";
-        String fileName = employeeId + "_" + file.getOriginalFilename();
-
-        try {
-            // Ensure directory exists
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
-
-            // Save file
-            File destination = new File(uploadDir + fileName);
-            file.transferTo(destination);
-
-            employee.setPhotographPath("/images/profiles/" + fileName);
-            employeeRepo.save(employee);
-
-            return "Profile picture uploaded successfully";
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload profile picture: " + e.getMessage());
-        }
-    }
-
     public List<EmployeeResponse> getAllEmployees() {
         List<Employee> employees = employeeRepo.findAll();
         return employeeMapper.toResponse(employees);

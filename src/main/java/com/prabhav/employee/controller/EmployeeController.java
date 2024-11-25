@@ -70,19 +70,6 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/uploadPicture/{employeeId}")
-    public ResponseEntity<String> uploadProfilePicture(
-            @PathVariable Long employeeId,
-            @RequestParam("file") MultipartFile file,
-            HttpServletRequest httpRequest) {
-        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
-            return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
-        }
-
-        String response = employeeService.uploadProfilePicture(employeeId, file);
-        return ResponseEntity.ok(response);
-    }
-
     @DeleteMapping("/delete/{employeeId}")
     public ResponseEntity<String> deleteEmployee(
             @PathVariable Long employeeId,
@@ -93,6 +80,7 @@ public class EmployeeController {
         String response = employeeService.deleteEmployee(employeeId);
         return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/getAllEmployee")
     public ResponseEntity<List<EmployeeResponse>> getAllEmployees(HttpServletRequest httpRequest) {

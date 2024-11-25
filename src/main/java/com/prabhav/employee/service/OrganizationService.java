@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +34,13 @@ public class OrganizationService {
         Optional<OrganizationHR> hr = organizationHRRepo.findById(id);
         return hr.map(organizationHRMapper::toResponse).orElse(null);
     }
-    public OrganizationResponse getOrganizationByName(String name) {
-        Optional<Organization> organization = organizationRepo.findByName(name);
-        return organization.map(organizationMapper::toResponse).orElse(null);
+    public List<OrganizationResponse> getOrganizationsByName(String name) {
+        List<Organization> organizations = organizationRepo.findByNameContainingIgnoreCase(name);
+        return organizations.stream()
+                .map(organizationMapper::toResponse)
+                .collect(Collectors.toList());
     }
+
 
     public OrganizationResponse getOrganizationByHrEmail(String hrContactEmail) {
         Optional<Organization> organization = organizationRepo.findByHrContacts_Email(hrContactEmail);

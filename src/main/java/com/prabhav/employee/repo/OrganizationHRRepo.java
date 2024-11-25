@@ -15,5 +15,7 @@ public interface OrganizationHRRepo extends JpaRepository<OrganizationHR, Long> 
     Optional<OrganizationHR> findByEmailAndOrganization_Id(String email, Long organizationId);
     Optional<OrganizationHR> findByIdAndOrganization_Id(Long hrId, Long organizationId);
     List<OrganizationHR> findByOrganization_Id(Long organizationId);
+    List<OrganizationHR> findByFirstNameContainingAndOrganization_Id(String firstName, Long organizationId);
+
 
 }

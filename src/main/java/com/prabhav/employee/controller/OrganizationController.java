@@ -33,13 +33,13 @@ public class OrganizationController {
     }
 
     @GetMapping("/getByName/{name}")
-    public ResponseEntity<OrganizationResponse> getOrganizationByName(
+    public ResponseEntity<List<OrganizationResponse>> getOrganizationsByName(
             @PathVariable String name,
             HttpServletRequest httpRequest) {
         if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
             return ResponseEntity.status(401).body(null);
         }
-        OrganizationResponse response = organizationService.getOrganizationByName(name);
+        List<OrganizationResponse> response = organizationService.getOrganizationsByName(name);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/getHRById/{id}")
@@ -66,7 +66,7 @@ public class OrganizationController {
         if (response == null) {
             return ResponseEntity.status(404).body(null);
         }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(200).body(response);
     }
 
     @GetMapping("/getAll")
@@ -87,7 +87,7 @@ public class OrganizationController {
         String response = organizationService.deleteOrganization(id);
         return ResponseEntity.ok(response);
     }
-    // New API to fetch list of HRs by Organization ID
+
     @GetMapping("/getHRsByOrganizationId/{organizationId}")
     public ResponseEntity<List<OrganizationHRResponse>> getHRsByOrganizationId(
             @PathVariable Long organizationId,

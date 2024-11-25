@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,12 @@ public class OrganizationHRService {
             System.out.println("HR contact not found for email: " + email + " and organization ID: " + organizationId);
         }
         return hrContactOpt.map(organizationHRMapper::toResponse).orElse(null);
+    }
+    public List<OrganizationHRResponse> getHrContactByName(String name, Long organizationId) {
+        List<OrganizationHR> hrContacts = organizationHRRepo.findByFirstNameContainingAndOrganization_Id(name, organizationId);
+        return hrContacts.stream()
+                .map(organizationHRMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     public List<OrganizationHRResponse> getAllHrContacts(Long organizationId) {
