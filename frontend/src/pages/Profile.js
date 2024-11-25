@@ -43,19 +43,26 @@ const Profile = () => {
 
     const handleUpdate = () => {
         if (!employee) return;
-
+    
         axios
             .put(`http://localhost:9192/api/v1/employees/update/${employee.employee_id}`, updatedDetails, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             })
-            .then(() => alert('Profile updated successfully!'))
+            .then(() => {
+                setEmployee(prevEmployee => ({
+                    ...prevEmployee,
+                    ...updatedDetails,
+                }));
+                alert('Profile updated successfully!');
+            })
             .catch((error) => {
                 console.error(error);
                 alert(error.response?.data || 'Failed to update profile');
             });
     };
+    
 
     const handleProfilePictureUpload = () => {
         if (!profilePicture || !employee) return;

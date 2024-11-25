@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { validateAddOrganizationForm } from '../utils/validation';
 import '../css/AddHR.css';  
+
 const AddOrganization = ({ onAddOrganization }) => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const handleAddOrganization = async () => {
+        // Clear previous errors
+        setErrors({});
+        
+        // Validate form fields
+        const validationErrors = validateAddOrganizationForm(name, address);
+        if (Object.values(validationErrors).some((error) => error)) {
+            setErrors(validationErrors);
+            return;
+        }
+
         const token = localStorage.getItem('user');
         if (!token) {
             alert('Please log in first.');
@@ -13,17 +27,20 @@ const AddOrganization = ({ onAddOrganization }) => {
         }
 
         try {
+            setLoading(true);
             await axios.post(
                 'http://localhost:9192/api/v1/organizations/create',
                 { name, address },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setTimeout(() => {
-                onAddOrganization(); 
-            }, 100);
+            setName('');
+            setAddress('');
+            onAddOrganization(); // Notify parent component
         } catch (error) {
             console.error('Failed to add organization:', error);
-            alert('Failed to add organization. Please try again.');
+            alert(error.response?.data?.message || 'Failed to add organization. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,6 +57,7 @@ const AddOrganization = ({ onAddOrganization }) => {
                         placeholder="Enter organization name"
                     />
                 </label>
+                {errors.name && <p className="error-message">{errors.name}</p>}
             </div>
 
             <div className="form-group">
@@ -52,10 +70,17 @@ const AddOrganization = ({ onAddOrganization }) => {
                         placeholder="Enter organization address"
                     />
                 </label>
+                {errors.address && <p className="error-message">{errors.address}</p>}
             </div>
 
             <div className="button-container">
-                <button className="submit-btn" onClick={handleAddOrganization}>Submit</button>
+                <button 
+                    className="submit-btn" 
+                    onClick={handleAddOrganization} 
+                    disabled={loading}
+                >
+                    {loading ? 'Submitting...' : 'Submit'}
+                </button>
                 <button className="cancel-btn" onClick={() => onAddOrganization()}>Cancel</button>
             </div>
         </div>

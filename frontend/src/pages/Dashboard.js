@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [showViewHRs, setShowViewHRs] = useState(false);
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(null);
   
-  // New state for modal visibility and selected organization for deletion
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [organizationToDelete, setOrganizationToDelete] = useState(null);
 
@@ -40,19 +39,19 @@ const Dashboard = () => {
   };
 
   const handleSearchChange = async (e) => {
-    const query = e.target.value;
+    const query = e.target.value.trim();
     setSearchQuery(query);
-
+  
     const token = localStorage.getItem('user');
-
-    if (query.length >= 3) {
+  
+    if (query.length >= 1) {
       try {
         const response = await axios.get(`http://localhost:9192/api/v1/organizations/getByName/${query}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setOrganizations([response.data]);
+        setOrganizations(response.data); 
       } catch (error) {
-        console.error('Failed to fetch organization:', error);
+        console.error('Failed to fetch organizations:', error);
       }
     } else if (query.length === 0) {
       fetchOrganizations(token);
@@ -61,13 +60,12 @@ const Dashboard = () => {
     }
   };
 
-  // Show the delete confirmation modal
+
   const handleDeleteClick = (id) => {
     setOrganizationToDelete(id);
     setShowDeleteConfirmation(true);
   };
 
-  // Confirm delete
   const handleConfirmDelete = async () => {
     const token = localStorage.getItem('user');
     try {
@@ -87,7 +85,6 @@ const Dashboard = () => {
     }
   };
 
-  // Cancel delete
   const handleCancelDelete = () => {
     setShowDeleteConfirmation(false);
     setOrganizationToDelete(null);
@@ -112,11 +109,12 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <h1>Dashboard</h1>
+      
       <div className="actions">
         <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
         <input
           type="text"
-          placeholder="Search Organization or HR"
+          placeholder="Search Organization"
           value={searchQuery}
           onChange={handleSearchChange}
           className="search-bar"
