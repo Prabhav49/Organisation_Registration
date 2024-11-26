@@ -47,4 +47,15 @@ public class Employee {
 
     @Column(name = "department_id")
     private Long departmentId;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.photographPath == null || this.photographPath.isEmpty()) {
+            this.photographPath = "/uploads/images/default.png"; // Default profile picture
+        }
+
+        if (this.employeeId == null) {
+            this.employeeId = 1L;
+        }
+    }
 }

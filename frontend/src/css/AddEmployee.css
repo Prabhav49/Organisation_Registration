@@ -1,0 +1,116 @@
+/* Scoped container styling for Add Employee */
+.add-employee-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #c3e0e5; /* Light palette color */
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styling */
+.add-employee-container h2 {
+    text-align: center;
+    color: #41729f; /* Primary color */
+}
+
+/* Form group container */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label styling */
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #274472; /* Label color */
+}
+
+/* Input field styling */
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #5885af; /* Border color */
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+/* Focused input field styling */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #41729f; /* Focus border color */
+    outline: none;
+}
+
+/* Button Container for Submit */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Submit Button Styles */
+.submit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #41729f; /* Primary color */
+    color: white;
+    width: 48%;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #274472; /* Hover color */
+}
+
+.submit-btn:active {
+    background-color: #274472; /* Active color */
+}
+
+/* Cancel Button Styles */
+.cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #ebbf48; /* Cancel color */
+    color: white;
+    width: 48%;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background-color: #c9a432; /* Hover color */
+}
+
+.cancel-btn:active {
+    background-color: #a88b27; /* Active color */
+}
+
+/* Error Text Styling */
+.error-text {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Media Query for small screens */
+@media (max-width: 600px) {
+    .button-container {
+        flex-direction: column;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

@@ -90,6 +90,28 @@ public class EmployeeController {
         List<EmployeeResponse> employees = employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
     }
+    @PostMapping("/uploadImage/{employeeId}")
+    public ResponseEntity<String> uploadImage(
+            @PathVariable Long employeeId,
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest httpRequest) {
+
+        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+            return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
+        }
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty. Please upload a valid image.");
+        }
+
+        try {
+            String photographPath = employeeService.uploadEmployeeImage(employeeId, file);
+            return ResponseEntity.ok(photographPath);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
+        }
+    }
+
 
     private String getTokenFromRequest(HttpServletRequest request) {
         return request.getHeader("Authorization");

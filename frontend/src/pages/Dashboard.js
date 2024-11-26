@@ -5,6 +5,8 @@ import AddOrganization from './AddOrganization';
 import AddHR from './AddHR';
 import ViewHRs from './ViewHRs';
 import '../css/Dashboard.css';
+import AddEmployee from './AddEmployee';  
+import { jwtDecode } from "jwt-decode";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,15 +19,36 @@ const Dashboard = () => {
   
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [organizationToDelete, setOrganizationToDelete] = useState(null);
+  const [showAddEmployee, setShowAddEmployee] = useState(false); 
+  const [userTitle, setUserTitle] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('user');
     if (token) {
+      fetchUserInfo(token);
       fetchOrganizations(token);
     } else {
       navigate('/login');
     }
   }, [navigate]);
+
+  const fetchUserInfo = async (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      const email = decoded.sub;
+
+      const response = await axios.get(`http://localhost:9192/api/v1/employees/getEmployeeInfo/${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Set the user title (assuming the title is returned in the response)
+      setUserTitle(response.data.title);  // Assuming the title is in response.data.title
+    } catch (error) {
+      console.error('Failed to fetch user info:', error);
+    }
+  };
 
   const fetchOrganizations = async (token) => {
     try {
@@ -59,7 +82,6 @@ const Dashboard = () => {
       setOrganizations([]);
     }
   };
-
 
   const handleDeleteClick = (id) => {
     setOrganizationToDelete(id);
@@ -106,20 +128,33 @@ const Dashboard = () => {
     setShowViewHRs(true);
   };
 
+  const handleAddEmployee = () => {
+    setShowAddEmployee(true); 
+  };
+
+  const handleEmployeeAdded = () => {
+    setShowAddEmployee(false); 
+    fetchOrganizations(localStorage.getItem('user')); 
+  };
+
   return (
     <div className="dashboard">
       <h1>Dashboard</h1>
-      
-      <div className="actions">
-        <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
-        <input
-          type="text"
-          placeholder="Search Organization"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="search-bar"
-        />
-      </div>
+      {userTitle === 'Admin' && !showAddEmployee && (
+        <button onClick={handleAddEmployee}>Add Employee</button>
+      )}
+      {!showAddHR && !showViewHRs && !showAddOrganization && !showAddEmployee && (
+        <div className="actions">
+          <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
+          <input
+            type="text"
+            placeholder="Search Organization"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="search-bar"
+          />
+        </div>
+      )}
 
       {showAddOrganization ? (
         <AddOrganization onAddOrganization={handleOrganizationAdded} />
@@ -127,6 +162,8 @@ const Dashboard = () => {
         <AddHR onAddHR={() => setShowAddHR(false)} organizationId={selectedOrganizationId} />
       ) : showViewHRs ? (
         <ViewHRs onViewHRs={() => setShowViewHRs(false)} organizationId={selectedOrganizationId} />
+      ) : showAddEmployee ? (
+        <AddEmployee onAddEmployee={handleEmployeeAdded} />
       ) : (
         <div className="organizations">
           <h2>Organizations</h2>

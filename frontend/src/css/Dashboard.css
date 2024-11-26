@@ -1,11 +1,11 @@
 /* Color Palette */
 :root {
-  --primary-bg: #f4f4f9;
-  --primary-text: #333;
-  --secondary-bg: #6200ea;
+  --primary-bg: #c3e0e5;
+  --primary-text: #274472;
+  --secondary-bg: #41729f;
   --secondary-text: #ffffff;
-  --border-color: #ddd;
-  --hover-bg: #3700b3;
+  --border-color: #5885af;
+  --hover-bg: #274472;
 }
 
 .dashboard {
@@ -60,14 +60,16 @@ button:hover {
   border: 1px solid var(--border-color);
   padding: 10px;
   text-align: left;
+
 }
 
 .organization-table tr:hover {
   background-color: var(--primary-bg);
 }
+
 .delete-btn-org {
-  background-color: #dc3545; /* Red background */
-  color: #fff; /* White text */
+  background-color: #dc3545; 
+  color: #fff; 
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
@@ -75,7 +77,7 @@ button:hover {
 }
 
 .delete-btn-org:hover {
-  background-color: #c82333; 
+  background-color: #c82333;
 }
 
 .organization-table th {

@@ -179,10 +179,10 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             <h1>HRs for Organization: {organizationName}</h1>
             <button className="back-btn" onClick={() => onViewHRs()}>Back to Dashboard</button>
 
-            <div className="search-bar">
+            <div className="search-bar-hr">
             <input
                 type="text"
-                placeholder="Search Organization"
+                placeholder="Search HR"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="search-bar"

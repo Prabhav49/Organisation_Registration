@@ -3,14 +3,14 @@
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #c3e0e5; /* Updated to a light palette color */
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-hr-container h1 {
     text-align: center;
-    color: #333;
+    color: #41729f; /* Updated to the primary color */
 }
 
 .form-group {
@@ -21,21 +21,21 @@
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #555;
+    color: #274472; /* Updated label color */
 }
 
 .form-group input {
     width: 100%;
     padding: 8px 12px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #5885af; /* Updated border color */
     border-radius: 4px;
     box-sizing: border-box;
     margin-top: 6px;
 }
 
 .form-group input:focus {
-    border-color: #6200ea;
+    border-color: #41729f; /* Updated focus color */
     outline: none;
 }
 
@@ -58,30 +58,30 @@
 
 /* Submit Button Styles */
 .submit-btn {
-    background-color: #6200ea;
+    background-color: #41729f; /* Updated to primary color */
     color: white;
 }
 
 .submit-btn:hover {
-    background-color: #3700b3;
+    background-color: #274472; /* Updated hover color */
 }
 
 .submit-btn:active {
-    background-color: #270080;
+    background-color: #274472; /* Updated active color */
 }
 
 /* Cancel Button Styles */
 .cancel-btn {
-    background-color: #ccc;
-    color: #333;
+    background-color: #ebbf48; /* Updated cancel button color */
+    color: white;
 }
 
 .cancel-btn:hover {
-    background-color: #bbb;
+    background-color: #c9a432; /* Updated hover color */
 }
 
 .cancel-btn:active {
-    background-color: #999;
+    background-color: #a88b27; /* Updated active color */
 }
 
 .error-text {
