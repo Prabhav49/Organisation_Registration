@@ -1,14 +1,13 @@
 # Outreach Management System
 
 ## Overview
-A full-stack web application for managing organizational outreach, built with Spring Boot and React.js.
+Full-stack web application for managing organizational outreach using Spring Boot and React.js.
 
 ## Features
-- User authentication via JWT
+- JWT authentication
 - Organization registration
 - HR contact management
-- Search and filter organizations
-- CRUD operations for organizations
+- Organization search and CRUD operations
 
 ## Technologies
 ### Backend
@@ -21,47 +20,27 @@ A full-stack web application for managing organizational outreach, built with Sp
 ### Frontend
 - React.js
 - Axios
-- Tailwind CSS
 
 ## Setup Instructions
 
 ### Backend Setup
 ```bash
-# Clone repository
-git clone https://github.com/your-repo.git
+git clone https://github.com/Prabhav49/Organisation_Registration.git
 cd backend
-
-# Configure database
-# Update application.properties with your database credentials
-
-# Build and run
 mvn clean install
 mvn spring-boot:run
 ```
 
 ### Frontend Setup
 ```bash
-# Navigate to frontend directory
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start development server
 npm start
 ```
 
-## API Endpoints
-
-### Authentication
-- `POST /auth/login`: User authentication
-
-### Organization Management
-- `POST /organization`: Create organization
-- `GET /organization`: List organizations
-- `GET /organization/{id}`: Get specific organization
-- `PUT /organization/{id}`: Update organization
-- `DELETE /organization/{id}`: Delete organization
+## API Documentation
+Comprehensive API documentation available at:
+[Postman API Documentation](https://documenter.getpostman.com/view/39229910/2sAYBXBWAf)
 
 ## Project Structure
 
@@ -83,13 +62,13 @@ npm start
 
 ## Contributing
 1. Fork the repository
-2. Create your feature branch
+2. Create feature branch
 3. Commit changes
-4. Push to the branch
+4. Push to branch
 5. Create pull request
 
 ## License
-[Specify your license]
+© 2024 Prabhav Pandey, IIITB. All Rights Reserved.
 
 ## Contact
-Prabhav - Prabhav.Pandey@iiitb.ac.in
+Prabhav Pandey - Prabhav.Pandey@iiitb.ac.in
