@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/ViewHRs.css'
+import { BASEURL } from '../helper/helper';
 
 const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
     
         const fetchOrganizationDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:9192/api/v1/organizations/getAll`, {
+                const response = await axios.get(`${BASEURL}/api/v1/organizations/getAll`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const organization = response.data.find((org) => org.id === parseInt(organizationId));
@@ -40,7 +41,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
     
         const fetchHRs = async () => {
             try {
-                const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getAll`, {
+                const response = await axios.get(`${BASEURL}/api/v1/organizations/${organizationId}/hr/getAll`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setHrList(response.data);
@@ -56,7 +57,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
 
     const fetchHRs = async () => {
         try {
-            const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getAll`, {
+            const response = await axios.get(`${BASEURL}/api/v1/organizations/${organizationId}/hr/getAll`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setHrList(response.data);
@@ -100,7 +101,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
             };
 
             const response = await axios.put(
-                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/update/${editingHrId}`,
+                `${BASEURL}/api/v1/organizations/${organizationId}/hr/update/${editingHrId}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -131,7 +132,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         }
         try {
             const response = await axios.delete(
-                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/delete/${hrToDelete}`,
+                `${BASEURL}/api/v1/organizations/${organizationId}/hr/delete/${hrToDelete}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -159,7 +160,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
       
         if (query.length >= 1) {
           try {
-            const response = await axios.get(`http://localhost:9192/api/v1/organizations/${organizationId}/hr/getByName/${query}`, {
+            const response = await axios.get(`${BASEURL}/api/v1/organizations/${organizationId}/hr/getByName/${query}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             setHrList(response.data); 

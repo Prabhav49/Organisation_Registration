@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { BASEURL } from "../helper/helper.js";
 
-const API_URL = 'http://localhost:9192/api/v1/auth/login';
+const API_URL = `${BASEURL}/api/v1/auth/login`;
 
 const login = (email, password) => {
   return axios

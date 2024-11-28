@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { validateHRForm } from '../utils/ValidationHR'; 
 import '../css/AddHR.css';
+import { BASEURL } from "../helper/helper.js";
 
 const AddHR = ({ onAddHR, organizationId }) => {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AddHR = ({ onAddHR, organizationId }) => {
 
         try {
             const response = await axios.post(
-                `http://localhost:9192/api/v1/organizations/${organizationId}/hr/add`,
+                `${BASEURL}/api/v1/organizations/${organizationId}/hr/add`,
                 { firstName, lastName, email, contactNumber },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

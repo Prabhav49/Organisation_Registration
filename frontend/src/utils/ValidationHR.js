@@ -1,15 +1,14 @@
 import axios from 'axios';
+import { BASEURL } from '../helper/helper';
 
-// Validate form fields and check if email already exists
+
 export const validateHRForm = async (firstName, lastName, email, contactNumber, organizationId,token) => {
     const errors = {};
 
-    // Validate First Name
     if (!firstName || firstName.length < 2 || firstName.length > 50) {
         errors.firstName = 'First name must be between 2 and 50 characters';
     }
 
-    // Validate Last Name
     if (!lastName || lastName.length < 2 || lastName.length > 50) {
         errors.lastName = 'Last name must be between 2 and 50 characters';
     }
@@ -20,7 +19,7 @@ export const validateHRForm = async (firstName, lastName, email, contactNumber, 
 
         try {
             const response = await axios.get(
-                `http://localhost:9192/api/v1/organizations/getByHrEmail/${email}`,
+                `${BASEURL}/api/v1/organizations/getByHrEmail/${email}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (response.status === 200) {

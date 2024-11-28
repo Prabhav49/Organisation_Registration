@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { validateAddOrganizationForm } from '../utils/validation';
 import '../css/AddHR.css';  
+import { BASEURL } from '../helper/helper';
 
 const AddOrganization = ({ onAddOrganization }) => {
     const [name, setName] = useState('');
@@ -27,7 +28,7 @@ const AddOrganization = ({ onAddOrganization }) => {
         try {
             setLoading(true);
             await axios.post(
-                'http://localhost:9192/api/v1/organizations/create',
+                `${BASEURL}/api/v1/organizations/create`,
                 { name, address },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

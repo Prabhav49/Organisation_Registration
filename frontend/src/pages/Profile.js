@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import "../css/Profile.css";
 import Modal from "./Modal";
+import { BASEURL } from "../helper/helper";
 
 const Profile = () => {
   const [employee, setEmployee] = useState(null);
@@ -24,13 +25,13 @@ const Profile = () => {
 
   const extractErrorMessage = (error) => {
     if (error.response?.data?.message) {
-      return error.response.data.message; // Backend-defined message
+      return error.response.data.message; 
     } else if (typeof error.response?.data === "string") {
-      return error.response.data; // Plain string message
+      return error.response.data; 
     } else if (error.message) {
-      return error.message; // Default error message
+      return error.message; 
     }
-    return "An unexpected error occurred"; // Fallback
+    return "An unexpected error occurred";
   };
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const Profile = () => {
 
       axios
         .get(
-          `http://localhost:9192/api/v1/employees/getEmployeeInfo/${email}`,
+          `${BASEURL}/api/v1/employees/getEmployeeInfo/${email}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ const Profile = () => {
   const handleUpdate = () => {
     axios
       .put(
-        `http://localhost:9192/api/v1/employees/update/${employee.employee_id}`,
+        `${BASEURL}/api/v1/employees/update/${employee.employee_id}`,
         updatedDetails,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -103,7 +104,7 @@ const Profile = () => {
 
     axios
       .post(
-        `http://localhost:9192/api/v1/employees/uploadImage/${employee.employee_id}`,
+        `${BASEURL}/api/v1/employees/uploadImage/${employee.employee_id}`,
         formData,
         {
           headers: {
@@ -146,7 +147,7 @@ const Profile = () => {
       onConfirm: () => {
         axios
           .delete(
-            `http://localhost:9192/api/v1/employees/delete/${employee.employee_id}`,
+            `${BASEURL}/api/v1/employees/delete/${employee.employee_id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -194,7 +195,7 @@ const Profile = () => {
 
     axios
       .put(
-        `http://localhost:9192/api/v1/employees/changePassword/${employee.employee_id}`,
+        `${BASEURL}/api/v1/employees/changePassword/${employee.employee_id}`,
         { oldPassword, newPassword, confirmPassword }, 
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -238,7 +239,7 @@ const Profile = () => {
             <img
               src={
                 employee.photograph_path
-                  ? `http://localhost:9192${employee.photograph_path}`
+                  ? `${BASEURL}${employee.photograph_path}`
                   : "/uploads/images/default.png"
               }
               alt={employee.name}

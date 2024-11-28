@@ -7,6 +7,7 @@ import ViewHRs from './ViewHRs';
 import '../css/Dashboard.css';
 import AddEmployee from './AddEmployee';  
 import { jwtDecode } from "jwt-decode";
+import { BASEURL } from "../helper/helper.js";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Dashboard = () => {
       const decoded = jwtDecode(token);
       const email = decoded.sub;
 
-      const response = await axios.get(`http://localhost:9192/api/v1/employees/getEmployeeInfo/${email}`, {
+      const response = await axios.get(`${BASEURL}/api/v1/employees/getEmployeeInfo/${email}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +53,7 @@ const Dashboard = () => {
 
   const fetchOrganizations = async (token) => {
     try {
-      const response = await axios.get('http://localhost:9192/api/v1/organizations/getAll', {
+      const response = await axios.get(`${BASEURL}/api/v1/organizations/getAll`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrganizations(response.data);
@@ -69,7 +70,7 @@ const Dashboard = () => {
   
     if (query.length >= 1) {
       try {
-        const response = await axios.get(`http://localhost:9192/api/v1/organizations/getByName/${query}`, {
+        const response = await axios.get(`${BASEURL}/api/v1/organizations/getByName/${query}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrganizations(response.data); 
@@ -91,7 +92,7 @@ const Dashboard = () => {
   const handleConfirmDelete = async () => {
     const token = localStorage.getItem('user');
     try {
-      const response = await axios.delete(`http://localhost:9192/api/v1/organizations/delete/${organizationToDelete}`, {
+      const response = await axios.delete(`${BASEURL}/api/v1/organizations/delete/${organizationToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

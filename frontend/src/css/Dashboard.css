@@ -35,11 +35,11 @@ button {
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  margin-right: 10px; /* Adds spacing between buttons */
+  margin-right: 10px; 
 }
 
 button:last-child {
-  margin-right: 0; /* Removes margin for the last button */
+  margin-right: 0; 
 }
 
 button:hover {
@@ -64,7 +64,8 @@ button:hover {
 }
 
 .organization-table tr:hover {
-  background-color: var(--primary-bg);
+  background-color:#8aa3b9;
+  color: white;
 }
 
 .delete-btn-org {

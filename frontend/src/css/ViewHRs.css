@@ -69,6 +69,11 @@ button:hover {
     padding: 8px;
     text-align: left;
 }
+.hr-table tr:hover{
+    background-color:#8aa3b9;
+    color: white;
+}
+
 
 .hr-table th {
     background-color: var(--secondary-bg); 

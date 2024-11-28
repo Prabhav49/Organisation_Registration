@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../css/AddEmployee.css';
+import { BASEURL } from "../helper/helper.js";
 
 const AddEmployee = ({ onAddEmployee }) => {
   const [employee, setEmployee] = useState({
@@ -27,7 +28,7 @@ const AddEmployee = ({ onAddEmployee }) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:9192/api/v1/employees/create',
+        `${BASEURL}/api/v1/employees/create`,
         employee,
         {
           headers: { Authorization: `Bearer ${token}` },
