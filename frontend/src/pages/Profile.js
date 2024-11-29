@@ -23,16 +23,16 @@ const Profile = () => {
     onConfirm: null,
   });
 
-  const extractErrorMessage = (error) => {
-    if (error.response?.data?.message) {
-      return error.response.data.message; 
-    } else if (typeof error.response?.data === "string") {
-      return error.response.data; 
-    } else if (error.message) {
-      return error.message; 
-    }
-    return "An unexpected error occurred";
-  };
+  // const extractErrorMessage = (error) => {
+  //   if (error.response?.data?.message) {
+  //     return error.response.data.message; 
+  //   } else if (typeof error.response?.data === "string") {
+  //     return error.response.data; 
+  //   } else if (error.message) {
+  //     return error.message; 
+  //   }
+  //   return "An unexpected error occurred";
+  // };
 
   useEffect(() => {
     if (!token) {
@@ -214,7 +214,7 @@ const Profile = () => {
         setModalData({
           isOpen: true,
           title: "Error",
-          message: extractErrorMessage(error),
+          message: "Fields are missing",
           isError: true,
           onConfirm: null,
         });

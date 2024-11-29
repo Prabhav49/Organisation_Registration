@@ -67,7 +67,7 @@ export const validateAddHRForm = (firstName, lastName, email, contactNumber) => 
     return Object.fromEntries(Object.entries(errors).filter(([, value]) => value));
 };
 
-// Default Export for Modular Imports
+
 const validations = {
     Login: { validateLoginForm },
     AddOrganizations: { validateAddOrganizationForm },

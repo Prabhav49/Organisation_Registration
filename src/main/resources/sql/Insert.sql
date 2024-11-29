@@ -12,3 +12,6 @@ VALUES ('John', 'Doe', 'john.doe@techcorp.com', '9876543210', 1),
 INSERT INTO employee (first_name, last_name, email, password, title, photograph_path, department_id) 
 VALUES ('Alice', 'Johnson', 'alice.johnson@techcorp.com', 'password123', 'Software Engineer', '/uploads/images/default.png', 101),
        ('Bob', 'Brown', 'bob.brown@innosoft.com', 'password456', 'Data Analyst', '/uploads/images/default.png', 102);
+
+INSERT INTO department (name, capacity)
+VALUES ('Employee', 100);

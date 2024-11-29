@@ -45,17 +45,15 @@ public class Employee {
     @Column(name = "photograph_path")
     private String photographPath;
 
-    @Column(name = "department_id")
-    private Long departmentId;
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    @NotNull(message = "Department is mandatory")
+    private Department department; // Many employees belong to one department
 
     @PrePersist
     public void prePersist() {
         if (this.photographPath == null || this.photographPath.isEmpty()) {
             this.photographPath = "/uploads/images/default.png"; // Default profile picture
-        }
-
-        if (this.employeeId == null) {
-            this.employeeId = 1L;
         }
     }
 }

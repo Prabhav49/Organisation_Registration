@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/ViewHRs.css'
 import { BASEURL } from '../helper/helper';
+import {validateHRForm} from '../utils/ValidationHR'
 
 const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
     
         fetchOrganizationDetails();
         fetchHRs();
-    }, [organizationId, navigate, token]); // No need to include fetchHRs as it's now inline
+    }, [organizationId, navigate, token]); 
     
 
     const fetchHRs = async () => {
@@ -91,7 +92,26 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
     const handleEditFormSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('user');
-
+    
+        // Validate form data
+        const validationErrors = await validateHRForm(
+            editFormData.firstName,
+            editFormData.lastName,
+            editFormData.email,
+            editFormData.contactNumber,
+            organizationId,
+            token
+        );
+    
+        if (Object.keys(validationErrors).length > 0) {
+            // Handle validation errors
+            console.error('Validation errors:', validationErrors);
+            alert(
+                Object.values(validationErrors).join('\n') // Display all validation errors as an alert
+            );
+            return;
+        }
+    
         try {
             const payload = {
                 first_name: editFormData.firstName,
@@ -99,13 +119,13 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
                 email: editFormData.email,
                 contact_number: editFormData.contactNumber,
             };
-
+    
             const response = await axios.put(
                 `${BASEURL}/api/v1/organizations/${organizationId}/hr/update/${editingHrId}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
+    
             if (response.status === 200 || response.status === 204) {
                 setHrList((prevList) =>
                     prevList.map((hr) => (hr.id === editingHrId ? { ...hr, ...editFormData } : hr))

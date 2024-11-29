@@ -18,7 +18,7 @@ public class EmployeeMapper {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(request.getPassword())
-                .departmentId(request.getDepartmentId())
+//                .departmentId(request.getDepartmentId())
                 .title(request.getTitle())
                 .photographPath(request.getPhotographPath())
                 .build();
@@ -43,9 +43,9 @@ public class EmployeeMapper {
         if (updateRequest.getPhotographPath() != null) {
             existingEmployee.setPhotographPath(updateRequest.getPhotographPath());
         }
-        if (updateRequest.getDepartmentId() != null) {
-            existingEmployee.setDepartmentId(updateRequest.getDepartmentId());
-        }
+//        if (updateRequest.getDepartmentId() != null) {
+//            existingEmployee.setDepartmentId(updateRequest.getDepartmentId());
+//        }
         return existingEmployee;
     }
 
@@ -58,7 +58,7 @@ public class EmployeeMapper {
                 .email(employee.getEmail())
                 .title(employee.getTitle())
                 .photographPath(employee.getPhotographPath())
-                .departmentName(getDepartmentName(employee.getDepartmentId()))
+//                .departmentName(getDepartmentName(employee.getDepartmentId()))
                 .build();
     }
 
