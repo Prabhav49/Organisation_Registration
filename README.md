@@ -35,8 +35,11 @@ mvn spring-boot:run
 ```bash
 cd frontend
 npm install
+npm install react-router-dom
 npm start
 ```
+### Configurations
+- Go to application.properties file inside resource folder and configure database mysql username and password.
 
 ## API Documentation
 Comprehensive API documentation available at:
