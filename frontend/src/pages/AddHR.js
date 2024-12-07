@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { validateHRForm } from '../utils/ValidationHR'; 
 import '../css/AddHR.css';
 import { BASEURL } from "../helper/helper.js";
+import { jwtDecode } from 'jwt-decode';
 
 const AddHR = ({ onAddHR, organizationId }) => {
     const navigate = useNavigate();
@@ -11,40 +12,73 @@ const AddHR = ({ onAddHR, organizationId }) => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [contactNumber, setContactNumber] = useState('');
-    const [errors, setErrors] = useState({}); 
+    const [errors, setErrors] = useState({});
+    const [showModal, setShowModal] = useState(false); 
+
+    const validateToken = (token) => {
+        try {
+            const decoded = jwtDecode(token);
+            const currentTime = Date.now() / 1000; 
+            if (decoded.exp < currentTime) {
+                return false; 
+            }
+            return true;
+        } catch (error) {
+            console.error('Failed to decode token:', error);
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem('user');
+        if (!token || !validateToken(token)) {
+            setShowModal(true); 
+        }
+    }, []);
 
     const handleAddHR = async () => {
+        setErrors({});
         const token = localStorage.getItem('user');
-        if (!token) {
-            navigate('/login');
+
+        if (!token || !validateToken(token)) {
+            alert('Session has expired. Please log in again.');
+            navigate('/login'); // Navigate to login if token is expired
             return;
         }
 
-        const validationErrors = await validateHRForm(firstName, lastName, email, contactNumber, organizationId,token);
+        const validationErrors = await validateHRForm(firstName, lastName, email, contactNumber, organizationId, token);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors); 
             return;
         }
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${BASEURL}/api/v1/organizations/${organizationId}/hr/add`,
                 { firstName, lastName, email, contactNumber },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
-            if (response.status === 200) {
-                onAddHR();
-            } else {
-                console.error('Error adding HR:', response.statusText);
-            }
+            onAddHR();
         } catch (error) {
             console.error('Failed to add HR:', error);
+            alert(error.response?.data?.message || 'Failed to add HR. Please try again.');
         }
     };
 
     return (
         <div className="add-hr-container">
+            {/* Modal for expired session */}
+            {showModal && (
+                <div className="error-modal-overlay">
+                    <div className="error-modal">
+                        <div className="modal-content">
+                            <h3>Your session has expired. Please log in again.</h3>
+                            <button onClick={() => navigate('/login')}>Go to Login</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h1>Add HR</h1>
 
             <div className="form-group">

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/ViewHRs.css'
 import { BASEURL } from '../helper/helper';
-import {validateHRForm} from '../utils/ValidationHR'
+// import {validateHRForm} from '../utils/ValidationHR'
 
 const ViewHRs = ({ organizationId, onViewHRs }) => {
     const navigate = useNavigate();
@@ -93,24 +93,7 @@ const ViewHRs = ({ organizationId, onViewHRs }) => {
         e.preventDefault();
         const token = localStorage.getItem('user');
     
-        // Validate form data
-        const validationErrors = await validateHRForm(
-            editFormData.firstName,
-            editFormData.lastName,
-            editFormData.email,
-            editFormData.contactNumber,
-            organizationId,
-            token
-        );
-    
-        if (Object.keys(validationErrors).length > 0) {
-            // Handle validation errors
-            console.error('Validation errors:', validationErrors);
-            alert(
-                Object.values(validationErrors).join('\n') // Display all validation errors as an alert
-            );
-            return;
-        }
+
     
         try {
             const payload = {

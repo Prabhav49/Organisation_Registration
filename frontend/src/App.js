@@ -14,10 +14,10 @@ const App = () => {
     <Router>
       <Navbar />
       <Routes>
-        {/* Redirect root (/) to /dashboard */}
+
         <Route path="/" element={<Navigate to="/dashboard" />} />
 
-        {/* Private routes with protected access */}
+
         <Route
           path="/login"
           element={<Login />}

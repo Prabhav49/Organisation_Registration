@@ -27,6 +27,6 @@ public class Department {
     @NotNull(message = "Capacity cannot be blank")
     private Long capacity;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Employee> employees; // One department can have many employees
+//    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Employee> employees; // One department can have many employees
 }

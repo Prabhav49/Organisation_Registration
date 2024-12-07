@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [showAddHR, setShowAddHR] = useState(false);
   const [showViewHRs, setShowViewHRs] = useState(false);
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(null);
-  
+
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [organizationToDelete, setOrganizationToDelete] = useState(null);
   const [showAddEmployee, setShowAddEmployee] = useState(false); 
@@ -43,9 +43,8 @@ const Dashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      // Set the user title (assuming the title is returned in the response)
-      setUserTitle(response.data.title);  // Assuming the title is in response.data.title
+      localStorage.setItem('username',response.data.first_name);
+      setUserTitle(response.data.title);  
     } catch (error) {
       console.error('Failed to fetch user info:', error);
     }
@@ -140,7 +139,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
+      <h1>Dashboard -  Welcome {localStorage.getItem('username')}</h1>
       {userTitle === 'Admin' && !showAddEmployee && (
         <button onClick={handleAddEmployee}>Add Employee</button>
       )}
