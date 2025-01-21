@@ -35,6 +35,7 @@ mvn spring-boot:run
 ```bash
 cd frontend
 npm install
+npm install react-router-dom
 npm start
 ```
 
