@@ -36,15 +36,27 @@ public class JwtUtil {
 
     public boolean validateToken(String token) {
         try {
+            System.out.println("Validating token: " + (token != null ? token.substring(0, Math.min(20, token.length())) + "..." : "null"));
+            
+            if (token == null || token.isEmpty()) {
+                System.out.println("Token is null or empty");
+                return false;
+            }
+            
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
+                System.out.println("Removed Bearer prefix, token now: " + token.substring(0, Math.min(20, token.length())) + "...");
             }
+            
             Jwts.parserBuilder()
                     .setSigningKey(SECRET_KEY)
                     .build()
                     .parseClaimsJws(token); // Parse and validate the token
+            System.out.println("Token validation successful");
             return true; // Token is valid
         } catch (Exception e) {
+            System.out.println("Token validation failed: " + e.getMessage());
+            e.printStackTrace();
             return false; // Token is invalid or expired
         }
     }

@@ -33,9 +33,7 @@ public class Employee {
     @Email(message = "Invalid email format")
     private String email;
 
-    @Column(name = "password", nullable = false)
-    @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Column(name = "title")
@@ -48,14 +46,30 @@ public class Employee {
     @Column(name = "department_id")
     private Long departmentId;
 
+    // OAuth2 fields
+    @Column(name = "oauth_provider")
+    @Builder.Default
+    private String oauthProvider = "LOCAL";
+
+    @Column(name = "oauth_id")
+    private String oauthId;
+
+    @Column(name = "is_email_verified")
+    @Builder.Default
+    private Boolean isEmailVerified = false;
+
     @PrePersist
     public void prePersist() {
         if (this.photographPath == null || this.photographPath.isEmpty()) {
             this.photographPath = "/uploads/images/default.png"; // Default profile picture
         }
-
-        if (this.employeeId == null) {
-            this.employeeId = 1L;
+        
+        if (this.oauthProvider == null) {
+            this.oauthProvider = "LOCAL";
+        }
+        
+        if (this.isEmailVerified == null) {
+            this.isEmailVerified = false;
         }
     }
 }

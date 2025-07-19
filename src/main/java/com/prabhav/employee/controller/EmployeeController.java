@@ -25,11 +25,10 @@ public class EmployeeController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createEmployee(
-            @RequestBody @Valid EmployeeRequest request,
-            HttpServletRequest httpRequest) {
-        if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
-            return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
-        }
+            @RequestBody @Valid EmployeeRequest request) {
+        // if (!jwtUtil.validateToken(getTokenFromRequest(httpRequest))) {
+        //     return ResponseEntity.status(401).body("Unauthorized: Invalid or missing token");
+        // }
         String response = employeeService.createEmployee(request);
         return ResponseEntity.status(201).body(response);
     }

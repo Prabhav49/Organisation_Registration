@@ -35,7 +35,10 @@ const Profile = () => {
   // };
 
   useEffect(() => {
+    console.log('Profile page - token from localStorage:', token ? token.substring(0, 20) + '...' : 'null');
+    
     if (!token) {
+      console.log('No token found, redirecting to login');
       navigate("/login");
       return;
     }
@@ -43,6 +46,7 @@ const Profile = () => {
     try {
       const decoded = jwtDecode(token);
       const email = decoded.sub;
+      console.log('Decoded email from token:', email);
 
       axios
         .get(
@@ -53,9 +57,14 @@ const Profile = () => {
             },
           }
         )
-        .then((response) => setEmployee(response.data))
+        .then((response) => {
+          console.log('API response received:', response.data);
+          setEmployee(response.data);
+        })
         .catch((error) => {
-          console.error(error);
+          console.error('API call failed:', error);
+          console.error('Error details:', error.response?.data);
+          console.error('Error status:', error.response?.status);
           navigate("/login");
         });
     } catch (error) {

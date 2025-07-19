@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import AddOrganization from "./pages/AddOrganization";
 import AddHr from "./pages/AddHR";
 import ViewHRs from "./pages/ViewHRs";
+import OAuth2RedirectHandler from "./components/OAuth2RedirectHandler";
 
 const App = () => {
   return (
@@ -21,6 +22,11 @@ const App = () => {
         <Route
           path="/login"
           element={<Login />}
+        />
+        
+        <Route
+          path="/oauth2/redirect"
+          element={<OAuth2RedirectHandler />}
         />
         
         <Route

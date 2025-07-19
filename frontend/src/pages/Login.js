@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthService from '../services/AuthService';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 import validations from '../utils/validation'; 
 import '../css/Login.css';
 
@@ -10,8 +11,25 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { validateLoginForm } = validations.Login; 
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      switch (error) {
+        case 'oauth2_failed':
+          setErrorMessage('Google login failed. Please try again.');
+          break;
+        case 'oauth2_authentication_failed':
+          setErrorMessage('Google authentication failed. Please try again.');
+          break;
+        default:
+          setErrorMessage('Login failed. Please try again.');
+      }
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,6 +47,16 @@ const Login = () => {
     } catch (error) {
       setErrorMessage(error.message || 'Login failed. Please try again.');
     }
+  };
+
+  const handleGoogleSuccess = (response) => {
+    console.log('Google login successful:', response);
+    // This will be handled by the OAuth2RedirectHandler
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error('Google login failed:', error);
+    setErrorMessage('Google login failed. Please try again.');
   };
 
   return (
@@ -59,6 +87,15 @@ const Login = () => {
 
             <button type="submit" className="login-button">Login</button>
           </form>
+          
+          <div className="divider">
+            <span>or</span>
+          </div>
+          
+          <GoogleLoginButton
+            onSuccess={handleGoogleSuccess}
+            onFailure={handleGoogleFailure}
+          />
         </div>
       </div>
     </div>
