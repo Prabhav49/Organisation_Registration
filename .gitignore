@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.local
+.env.production
+.env.staging
+
+### OAuth2 & Secrets ###
+application-secrets.properties
