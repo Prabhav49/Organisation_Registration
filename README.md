@@ -5,11 +5,16 @@ A comprehensive full-stack web application for managing organizational outreach 
 
 ## 🚀 Features
 - **Dual Authentication System**: Local JWT authentication + Google OAuth2 SSO
+- **Two-Factor Authentication (2FA)**: TOTP-based security using QR codes
+- **Advanced Security**: Password policies, account lockout, audit logging
+- **Admin User Management**: Super admin controls for user roles, 2FA, and accounts
 - **Organization Management**: Complete CRUD operations for organizations
 - **HR Contact Management**: Manage HR contacts for each organization  
 - **Employee Management**: Employee registration and profile management
-- **Secure API**: JWT-protected REST endpoints
-- **Responsive UI**: Modern React.js frontend
+- **Security Dashboard**: 2FA setup, password management, security settings
+- **Audit Trail**: Comprehensive logging of all user actions and security events
+- **Secure API**: JWT-protected REST endpoints with role-based access
+- **Responsive UI**: Modern React.js frontend with professional styling
 - **File Upload**: Profile picture and document upload support
 
 ## 🏗️ System Architecture
@@ -22,32 +27,60 @@ graph TB
         C[Organization Management]
         D[HR Management]
         E[Employee Profile]
+        F[Security Settings]
+        G[2FA Setup/Verify]
+        H[Admin Users Panel]
     end
     
     subgraph "Backend (Spring Boot - Port 9192)"
-        F[Authentication Controller]
-        G[Organization Controller]
-        H[HR Controller]
-        I[Employee Controller]
-        J[JWT Service]
-        K[OAuth2 Service]
+        I[Authentication Controller]
+        J[Organization Controller]
+        K[HR Controller]
+        L[Employee Controller]
+        M[Admin Controller]
+        N[JWT Service]
+        O[OAuth2 Service]
+        P[2FA Service]
+        Q[Audit Service]
+        R[Password Policy Service]
     end
     
     subgraph "Database"
-        L[(MySQL Database)]
+        S[(MySQL Database)]
+        T[Employee Table]
+        U[TwoFactorAuth Table]
+        V[AuditLog Table]
+        W[Organization Table]
+        X[PasswordHistory Table]
     end
     
     subgraph "External Services"
-        M[Google OAuth2]
+        Y[Google OAuth2]
+        Z[TOTP Authenticator Apps]
     end
     
-    A --> F
-    B --> G
-    C --> G
-    D --> H
-    E --> I
-    F --> J
-    F --> K
+    A --> I
+    B --> J
+    C --> J
+    D --> K
+    E --> L
+    F --> P
+    G --> P
+    H --> M
+    I --> N
+    I --> O
+    I --> P
+    M --> Q
+    P --> Q
+    I --> R
+    O --> Y
+    P --> Z
+    N --> S
+    Q --> V
+    R --> X
+    J --> W
+    L --> T
+    P --> U
     K --> M
     G --> L
     H --> L
@@ -55,7 +88,73 @@ graph TB
     J --> L
 ```
 
-## 🔐 Authentication Flow
+## � Security Architecture
+
+```mermaid
+graph TB
+    subgraph "Authentication Layer"
+        A1[JWT Authentication]
+        A2[Google OAuth2]
+        A3[Two-Factor Authentication]
+        A4[Session Management]
+    end
+    
+    subgraph "Authorization Layer"
+        B1[Role-Based Access Control]
+        B2[EMPLOYEE Role]
+        B3[ADMIN Role]
+        B4[SUPER_ADMIN Role]
+    end
+    
+    subgraph "Security Features"
+        C1[Password Policies]
+        C2[Account Lockout]
+        C3[Password History]
+        C4[TOTP 2FA]
+        C5[QR Code Generation]
+        C6[Backup Codes]
+    end
+    
+    subgraph "Monitoring & Audit"
+        D1[Audit Logging]
+        D2[Security Events]
+        D3[Login Attempts]
+        D4[Admin Actions]
+        D5[Failed Operations]
+    end
+    
+    subgraph "Admin Controls"
+        E1[User Management]
+        E2[Force 2FA Enable/Disable]
+        E3[Account Lock/Unlock]
+        E4[Role Assignment]
+        E5[Audit Trail Review]
+    end
+    
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+    A4 --> D1
+    B2 --> C1
+    B3 --> E1
+    B4 --> E1
+    C4 --> C5
+    C4 --> C6
+    E1 --> D4
+    D1 --> D2
+    D1 --> D3
+    D1 --> D5
+    E5 --> D1
+    
+    style A1 fill:#e1f5fe
+    style A2 fill:#e1f5fe
+    style A3 fill:#f3e5f5
+    style C4 fill:#f3e5f5
+    style D1 fill:#fff3e0
+    style E1 fill:#e8f5e8
+```
+
+## �🔐 Authentication Flow
 
 ```mermaid
 sequenceDiagram
@@ -64,16 +163,30 @@ sequenceDiagram
     participant Backend
     participant Database
     participant Google
+    participant Authenticator
     
-    Note over User,Google: Local Authentication Flow
+    Note over User,Authenticator: Local Authentication + 2FA Flow
     User->>Frontend: Enter credentials
     Frontend->>Backend: POST /auth/login
     Backend->>Database: Validate credentials
-    Database-->>Backend: User data
-    Backend-->>Frontend: JWT Token
+    Database-->>Backend: User data (2FA enabled?)
+    
+    alt 2FA Enabled
+        Backend-->>Frontend: Require 2FA verification
+        Frontend-->>User: Show 2FA input
+        User->>Authenticator: Get TOTP code
+        Authenticator-->>User: 6-digit code
+        User->>Frontend: Enter TOTP code
+        Frontend->>Backend: POST /auth/verify-2fa
+        Backend->>Database: Validate TOTP
+        Database-->>Backend: Verification result
+        Backend-->>Frontend: JWT Token
+    else 2FA Disabled
+        Backend-->>Frontend: JWT Token
+    end
     Frontend-->>User: Dashboard access
     
-    Note over User,Google: Google OAuth2 Flow
+    Note over User,Authenticator: Google OAuth2 Flow
     User->>Frontend: Click "Login with Google"
     Frontend->>Backend: Redirect to /oauth2/authorization/google
     Backend->>Google: OAuth2 authorization request
@@ -82,7 +195,7 @@ sequenceDiagram
     Google->>Backend: Authorization code (callback)
     Backend->>Google: Exchange code for tokens
     Google-->>Backend: Access token + user info
-    Backend->>Database: Create/update user
+    Backend->>Database: Create/update user (EMPLOYEE role)
     Backend-->>Frontend: JWT Token + redirect
     Frontend-->>User: Dashboard access
 ```
@@ -106,6 +219,38 @@ sequenceDiagram
 - **Axios** - HTTP client
 - **CSS3** - Styling
 - **JavaScript ES6+** - Programming language
+
+## 🔐 Security Features
+
+### Two-Factor Authentication (2FA)
+- **TOTP Implementation**: Time-based One-Time Password using industry standards
+- **QR Code Setup**: Easy setup with Google Authenticator, Authy, or similar apps
+- **Backup Codes**: Recovery options for account access
+- **Mandatory 2FA**: Admin can enforce 2FA for enhanced security
+
+### Password Security
+- **Complex Password Policies**: Minimum length, special characters, numbers
+- **Password History**: Prevents reuse of recent passwords
+- **Secure Hashing**: BCrypt with salt for password storage
+- **Password Change Flow**: Secure current password verification
+
+### Account Protection
+- **Account Lockout**: Automatic lockout after failed login attempts
+- **Session Management**: Secure JWT token handling
+- **Role-Based Access**: EMPLOYEE, ADMIN, SUPER_ADMIN roles
+- **Admin Controls**: Super admin can lock/unlock accounts and manage 2FA
+
+### Audit & Monitoring
+- **Comprehensive Logging**: All user actions tracked with timestamps
+- **Security Events**: Login attempts, 2FA setup, admin actions
+- **Audit Trail**: Filterable logs by action, status, date range
+- **Admin Dashboard**: Real-time monitoring of security events
+
+### Data Protection
+- **JWT Security**: Short-lived tokens with role-based claims
+- **OAuth2 Integration**: Secure Google SSO with proper scopes
+- **Input Validation**: Frontend and backend validation
+- **Error Handling**: Secure error messages without data leakage
 
 ## ⚙️ Google OAuth2 Configuration
 
@@ -228,31 +373,57 @@ Organisation_Registration/
 │   │   └── SecurityConfig.java        # Spring Security configuration
 │   ├── controller/                    # REST API controllers
 │   │   ├── AuthController.java        # Authentication endpoints
+│   │   ├── AdminController.java       # Admin user management + audit logs
 │   │   ├── EmployeeController.java    # Employee management
 │   │   ├── OrganizationController.java# Organization management
-│   │   └── HRController.java          # HR contact management
+│   │   ├── HRController.java          # HR contact management
+│   │   ├── TwoFactorAuthController.java# 2FA setup and verification
+│   │   └── PasswordController.java    # Password management
 │   ├── entity/                        # JPA entities
 │   │   ├── Employee.java              # Employee entity
 │   │   ├── Organization.java          # Organization entity
-│   │   └── HRContact.java             # HR contact entity
-│   ├── repo/                          # JPA repositories
-│   └── service/                       # Business logic services
+│   │   ├── HRContact.java             # HR contact entity
+│   │   ├── TwoFactorAuth.java         # 2FA configuration entity
+│   │   ├── AuditLog.java              # Audit trail entity
+│   │   └── PasswordHistory.java       # Password history entity
+│   ├── service/                       # Business logic services
+│   │   ├── TwoFactorAuthService.java  # 2FA implementation
+│   │   ├── AuditService.java          # Audit logging service
+│   │   ├── PasswordPolicyService.java # Password validation
+│   │   └── EmployeeService.java       # Employee operations
+│   ├── dto/                           # Data Transfer Objects
+│   │   ├── AdminUserResponse.java     # Admin user management DTOs
+│   │   ├── AuditLogResponse.java      # Audit log DTOs
+│   │   └── TwoFactorSetupResponse.java# 2FA setup DTOs
+│   └── repo/                          # JPA repositories
 ├── frontend/
 │   ├── src/
 │   │   ├── components/                # Reusable React components
 │   │   │   ├── GoogleLoginButton.js   # Google OAuth2 login
 │   │   │   ├── OAuth2RedirectHandler.js # OAuth2 callback handler
 │   │   │   ├── PrivateRoute.js        # Protected routes
-│   │   │   └── Navbar.js              # Navigation component
+│   │   │   ├── Navbar.js              # Navigation component
+│   │   │   ├── SecuritySettings.js    # 2FA and security management
+│   │   │   ├── TwoFactorSetup.js      # 2FA QR code setup
+│   │   │   ├── TwoFactorVerify.js     # 2FA code verification
+│   │   │   └── AuditLogs.js           # Audit trail viewer
 │   │   ├── pages/                     # Application screens
-│   │   │   ├── Login.js               # Login page
+│   │   │   ├── Login.js               # Login page with 2FA support
 │   │   │   ├── Dashboard.js           # Main dashboard
-│   │   │   ├── Profile.js             # User profile
+│   │   │   ├── Profile.js             # User profile with security
+│   │   │   ├── AdminUsers.js          # Admin user management panel
 │   │   │   ├── AddOrganization.js     # Organization form
 │   │   │   └── ViewHRs.js             # HR management
+│   │   ├── css/                       # Component stylesheets
+│   │   │   ├── SecuritySettings.css   # Security UI styles
+│   │   │   ├── TwoFactorSetup.css     # 2FA setup styles
+│   │   │   ├── AdminUsers.css         # Admin panel styles
+│   │   │   └── AuditLogs.css          # Audit logs styles
 │   │   ├── services/
 │   │   │   └── AuthService.js         # API service layer
 │   │   └── utils/                     # Utility functions
+│   │       ├── validation.js          # Form validation
+│   │       └── ValidationHR.js        # HR validation
 │   └── public/                        # Static assets
 ├── .env.example                       # Environment variables template
 ├── .gitignore                         # Git ignore rules
@@ -264,8 +435,33 @@ Organisation_Registration/
 ### Authentication
 - `POST /auth/login` - Local login with email/password
 - `POST /auth/register` - User registration
+- `POST /auth/verify-2fa` - Verify 2FA code during login
 - `GET /oauth2/authorization/google` - Initiate Google OAuth2 login
 - `GET /oauth2/callback/google` - Google OAuth2 callback
+
+### Two-Factor Authentication
+- `POST /api/v1/2fa/setup` - Generate 2FA QR code and secret
+- `POST /api/v1/2fa/enable` - Enable 2FA with verification
+- `POST /api/v1/2fa/disable` - Disable 2FA with verification
+- `GET /api/v1/2fa/status` - Check 2FA status
+
+### Password Management
+- `POST /api/v1/password/change` - Change user password
+- `POST /api/v1/password/validate` - Validate password policy
+
+### Admin User Management
+- `GET /api/v1/admin/users` - Get all users (admin only)
+- `POST /api/v1/admin/users` - Create new user (admin only)
+- `PUT /api/v1/admin/users/{id}/role` - Update user role (super admin only)
+- `DELETE /api/v1/admin/users/{id}` - Delete user (super admin only)
+- `POST /api/v1/admin/users/{id}/2fa/enable` - Force enable 2FA (admin only)
+- `POST /api/v1/admin/users/{id}/2fa/disable` - Force disable 2FA (admin only)
+- `POST /api/v1/admin/users/{id}/lock` - Lock user account (admin only)
+- `POST /api/v1/admin/users/{id}/unlock` - Unlock user account (admin only)
+
+### Audit Logs
+- `GET /api/v1/admin/audit-logs` - Get audit logs (admin only)
+- `GET /api/v1/admin/audit-logs/{entityType}/{entityId}` - Get entity-specific logs
 
 ### Organizations
 - `GET /api/organizations` - Get all organizations
@@ -300,13 +496,38 @@ Organisation_Registration/
 4. Verify automatic account creation/login
 5. Test dashboard functionality
 
-### 3. API Testing
+### 3. Two-Factor Authentication Test
+1. Login to your account
+2. Navigate to Profile → Security Settings
+3. Click "Setup 2FA" and scan QR code with authenticator app
+4. Enable 2FA by entering verification code
+5. Logout and login again to test 2FA requirement
+6. Test 2FA disable functionality
+
+### 4. Admin Features Test (Super Admin Account Required)
+1. Login with SUPER_ADMIN role account
+2. Navigate to Admin Users panel
+3. Test user role changes, account lock/unlock
+4. Test force enable/disable 2FA for other users
+5. Review audit logs with filters
+
+### 5. Security Features Test
+1. Test password change with policy validation
+2. Test account lockout (multiple failed login attempts)
+3. Verify audit logging for all actions
+4. Test admin controls and monitoring
+
+### 6. API Testing
 Use the provided Postman collection or curl commands:
 ```bash
 # Login and get JWT token
 curl -X POST http://localhost:9192/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"password"}'
+
+# Test 2FA setup (requires JWT token)
+curl -X POST http://localhost:9192/api/v1/2fa/setup \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 
 # Use token to access protected endpoint
 curl -X GET http://localhost:9192/api/organizations \

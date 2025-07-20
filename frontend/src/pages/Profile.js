@@ -10,9 +10,6 @@ const Profile = () => {
   const [employee, setEmployee] = useState(null);
   const [updatedDetails, setUpdatedDetails] = useState({});
   const [profilePicture, setProfilePicture] = useState(null);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("user");
   const [modalData, setModalData] = useState({
@@ -190,46 +187,6 @@ const Profile = () => {
     setProfilePicture(e.target.files[0]);
   };
 
-  const handleChangePassword = () => {
-    if (newPassword !== confirmPassword) {
-      setModalData({
-        isOpen: true,
-        title: "Error",
-        message: "Passwords do not match!",
-        isError: true,
-        onConfirm: null,
-      });
-      return;
-    }
-
-    axios
-      .put(
-        `${BASEURL}/api/v1/employees/changePassword/${employee.employee_id}`,
-        { oldPassword, newPassword, confirmPassword }, 
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then(() => {
-        setModalData({
-          isOpen: true,
-          title: "Success",
-          message: "Password changed successfully!",
-          isError: false,
-          onConfirm: null,
-        });
-      })
-      .catch((error) => {
-        setModalData({
-          isOpen: true,
-          title: "Error",
-          message: "Fields are missing",
-          isError: true,
-          onConfirm: null,
-        });
-      });
-  };
-
   const closeModal = () => {
     setModalData((prevState) => ({ ...prevState, isOpen: false }));
   };
@@ -271,7 +228,7 @@ const Profile = () => {
           </button>
         </div>
 
-        <div className="profile-update">
+        <div className="profile-actions">
           <div className="update-section">
             <h2>Update Profile</h2>
             <div className="input-group">
@@ -301,42 +258,23 @@ const Profile = () => {
 
           <div className="upload-section">
             <h2>Upload Profile Picture</h2>
-            <div className="input-group">
-              <input type="file" accept="image/*" onChange={handleFileChange} />
-              <button
-                className="upload-btn"
-                onClick={handleProfilePictureUpload}
-              >
-                Upload
-              </button>
+            <div className="file-input-container">
+              <label htmlFor="file-input" className="file-input-label">
+                Choose Profile Picture
+              </label>
+              <input 
+                id="file-input"
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileChange} 
+              />
             </div>
-          </div>
-
-          <div className="change-password-section">
-            <h2>Change Password</h2>
-            <div className="input-group">
-              <input
-                type="password"
-                placeholder="Old Password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Confirm New Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              <button className="password-btn" onClick={handleChangePassword}>
-                Change Password
-              </button>
-            </div>
+            <button
+              className="upload-btn"
+              onClick={handleProfilePictureUpload}
+            >
+              Upload
+            </button>
           </div>
         </div>
       </div>

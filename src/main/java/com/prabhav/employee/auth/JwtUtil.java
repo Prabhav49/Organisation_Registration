@@ -1,5 +1,6 @@
 package com.prabhav.employee.auth;
 
+import com.prabhav.employee.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,10 +18,15 @@ public class JwtUtil {
 
     private static final String SECRET = "cr666N7wIV+KJ2xOQpWtcfAekL4YXd9gbnJMs8SJ9sI=";
     private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
-    private final long EXPIRATION_TIME = 1000 * 60 * 60;
+    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
     public String generateToken(String email) {
+        return generateToken(email, Role.EMPLOYEE);
+    }
+
+    public String generateToken(String email, Role role) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role.getRoleName());
         return createToken(claims, email);
     }
 
@@ -73,6 +79,27 @@ public class JwtUtil {
 
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return (String) extractAllClaims(token).get("role");
+    }
+
+    public boolean hasRole(String token, Role requiredRole) {
+        String tokenRole = extractRole(token);
+        return tokenRole != null && tokenRole.equals(requiredRole.getRoleName());
+    }
+
+    public boolean hasAnyRole(String token, Role... roles) {
+        String tokenRole = extractRole(token);
+        if (tokenRole == null) return false;
+        
+        for (Role role : roles) {
+            if (tokenRole.equals(role.getRoleName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Claims extractAllClaims(String token) {

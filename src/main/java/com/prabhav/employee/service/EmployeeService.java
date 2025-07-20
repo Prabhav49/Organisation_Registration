@@ -1,10 +1,12 @@
 package com.prabhav.employee.service;
 
+import com.prabhav.employee.dto.AdminUserResponse;
 import com.prabhav.employee.dto.EmployeeRequest;
 import com.prabhav.employee.dto.EmployeeUpdateRequest;
 import com.prabhav.employee.dto.EmployeeResponse;
 import com.prabhav.employee.dto.PasswordChangeRequest;
 import com.prabhav.employee.entity.Employee;
+import com.prabhav.employee.entity.Role;
 import com.prabhav.employee.mapper.EmployeeMapper;
 import com.prabhav.employee.repo.EmployeeRepo;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +33,7 @@ public class EmployeeService {
     private final EmployeeRepo employeeRepo;
     private final EmployeeMapper employeeMapper;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final TwoFactorAuthService twoFactorAuthService;
 
     public String createEmployee(EmployeeRequest request) {
         Employee employee = employeeMapper.toEntity(request);
@@ -140,5 +146,95 @@ public class EmployeeService {
     public List<EmployeeResponse> getAllEmployees() {
         List<Employee> employees = employeeRepo.findAll();
         return employeeMapper.toResponse(employees);
+    }
+
+    // Admin methods for user management
+    public List<AdminUserResponse> getAllUsersForAdmin() {
+        List<Employee> employees = employeeRepo.findAll();
+        return employees.stream()
+                .map(employee -> AdminUserResponse.builder()
+                        .id(employee.getEmployeeId())
+                        .firstName(employee.getFirstName())
+                        .lastName(employee.getLastName())
+                        .email(employee.getEmail())
+                        .role(employee.getRole())
+                        .isAccountLocked(employee.getIsAccountLocked())
+                        .isTwoFactorEnabled(employee.getIsTwoFactorEnabled())
+                        .title(employee.getTitle())
+                        .build())
+                .collect(Collectors.toList());
+    }    public void createUser(EmployeeRequest request) {
+        Employee employee = Employee.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.EMPLOYEE) // Default role for admin-created users
+                .title(request.getTitle())
+                .departmentId(request.getDepartmentId())
+                .isTwoFactorEnabled(false)
+                .isAccountLocked(false)
+                .isEmailVerified(true)
+                .failedLoginAttempts(0)
+                .oauthProvider("LOCAL")
+                .build();
+        
+        employeeRepo.save(employee);
+    }
+
+    public void updateUserRole(Long userId, String newRole) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employee.setRole(Role.valueOf(newRole.toUpperCase()));
+        employeeRepo.save(employee);
+    }
+
+    public void deleteUser(Long userId) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employeeRepo.delete(employee);
+    }
+
+    public void enableUserTwoFactor(Long userId) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employee.setIsTwoFactorEnabled(true);
+        employeeRepo.save(employee);
+    }
+
+    public void disableUserTwoFactor(Long userId) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employee.setIsTwoFactorEnabled(false);
+        employeeRepo.save(employee);
+
+        // Also update the TwoFactorAuth table to keep it in sync
+        try {
+            twoFactorAuthService.disableUserTwoFactor(employee.getEmail());
+        } catch (Exception e) {
+            // If TwoFactorAuth record doesn't exist, that's okay
+            System.out.println("No TwoFactorAuth record found for user: " + employee.getEmail());
+        }
+    }
+
+    public void lockUser(Long userId) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employee.setIsAccountLocked(true);
+        employeeRepo.save(employee);
+    }
+
+    public void unlockUser(Long userId) {
+        Employee employee = employeeRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        employee.setIsAccountLocked(false);
+        employee.setFailedLoginAttempts(0);
+        employeeRepo.save(employee);
     }
 }

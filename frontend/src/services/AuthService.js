@@ -8,16 +8,24 @@ const login = (email, password) => {
   return axios
     .post(API_URL, { email, password })
     .then((response) => {
-      const token = response.data;
+      const data = response.data;
 
-      if (token && token !== "Invalid email or password") {
-        localStorage.setItem('user', token);  
-        return { token };
+      if (data.message === "2FA required" || data.requiresTwoFactor) {
+        // Return 2FA required response
+        return { requiresTwoFactor: true, message: "2FA required" };
+      } else if (data && data.token && data.role) {
+        localStorage.setItem('user', data.token);  
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('sessionId', data.sessionId);
+        return data;
       } else {
         throw new Error('Invalid login credentials');
       }
     })
     .catch((error) => {
+      if (error.response && error.response.data && error.response.data.error) {
+        throw new Error(error.response.data.error);
+      }
       throw new Error('Invalid email or password');
     });
 };

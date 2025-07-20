@@ -58,6 +58,37 @@ public class Employee {
     @Builder.Default
     private Boolean isEmailVerified = false;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    @Builder.Default
+    private Role role = Role.EMPLOYEE;
+
+    @Column(name = "is_account_locked")
+    @Builder.Default
+    private Boolean isAccountLocked = false;
+
+    @Column(name = "failed_login_attempts")
+    @Builder.Default
+    private Integer failedLoginAttempts = 0;
+
+    @Column(name = "last_login")
+    private java.time.LocalDateTime lastLogin;
+
+    @Column(name = "password_changed_at")
+    private java.time.LocalDateTime passwordChangedAt;
+
+    @Column(name = "is_two_factor_enabled")
+    @Builder.Default
+    private Boolean isTwoFactorEnabled = false;
+
+    @Column(name = "created_at")
+    @Builder.Default
+    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    @Builder.Default
+    private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
+
     @PrePersist
     public void prePersist() {
         if (this.photographPath == null || this.photographPath.isEmpty()) {
@@ -71,5 +102,26 @@ public class Employee {
         if (this.isEmailVerified == null) {
             this.isEmailVerified = false;
         }
+        
+        if (this.role == null) {
+            this.role = Role.EMPLOYEE;
+        }
+        
+        if (this.isAccountLocked == null) {
+            this.isAccountLocked = false;
+        }
+        
+        if (this.failedLoginAttempts == null) {
+            this.failedLoginAttempts = 0;
+        }
+        
+        if (this.isTwoFactorEnabled == null) {
+            this.isTwoFactorEnabled = false;
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = java.time.LocalDateTime.now();
     }
 }

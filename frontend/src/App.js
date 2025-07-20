@@ -9,6 +9,10 @@ import AddOrganization from "./pages/AddOrganization";
 import AddHr from "./pages/AddHR";
 import ViewHRs from "./pages/ViewHRs";
 import OAuth2RedirectHandler from "./components/OAuth2RedirectHandler";
+import SecuritySettings from "./components/SecuritySettings";
+import TwoFactorSetup from "./components/TwoFactorSetup";
+import TwoFactorVerify from "./components/TwoFactorVerify";
+import AdminUsers from "./pages/AdminUsers";
 
 const App = () => {
   return (
@@ -16,12 +20,17 @@ const App = () => {
       <Navbar />
       <Routes>
 
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
 
 
         <Route
           path="/login"
           element={<Login />}
+        />
+        
+        <Route
+          path="/2fa-verify"
+          element={<TwoFactorVerify />}
         />
         
         <Route
@@ -71,6 +80,30 @@ const App = () => {
                   element={
                     <PrivateRoute>
                       <ViewHRs />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/security"
+                  element={
+                    <PrivateRoute>
+                      <SecuritySettings />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/2fa-setup"
+                  element={
+                    <PrivateRoute>
+                      <TwoFactorSetup />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <PrivateRoute>
+                      <AdminUsers />
                     </PrivateRoute>
                   }
                 />

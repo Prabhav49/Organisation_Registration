@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { validateAddOrganizationForm } from '../utils/validation';
-import '../css/AddHR.css';  
+import '../css/AddOrganization.css';  
 import { BASEURL } from '../helper/helper';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';

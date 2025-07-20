@@ -22,10 +22,13 @@ const Dashboard = () => {
   const [organizationToDelete, setOrganizationToDelete] = useState(null);
   const [showAddEmployee, setShowAddEmployee] = useState(false); 
   const [userTitle, setUserTitle] = useState('');
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('user');
-    if (token) {
+    const role = localStorage.getItem('role');
+    if (token && role) {
+      setUserRole(role);
       fetchUserInfo(token);
       fetchOrganizations(token);
     } else {
@@ -139,13 +142,38 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard -  Welcome {localStorage.getItem('username')}</h1>
-      {userTitle === 'Admin' && !showAddEmployee && (
-        <button onClick={handleAddEmployee}>Add Employee</button>
-      )}
+      <h1>Dashboard - Welcome {localStorage.getItem('username')}</h1>
+      <div className="role-info">
+        <span className="role-badge">{userRole}</span>
+      </div>
+      
+      {/* Role-based action buttons */}
       {!showAddHR && !showViewHRs && !showAddOrganization && !showAddEmployee && (
         <div className="actions">
-          <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
+          {/* Super Admin can do everything */}
+          {userRole === 'SUPER_ADMIN' && (
+            <>
+              <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
+              <button onClick={handleAddEmployee}>Add Employee</button>
+              <button onClick={() => navigate('/admin/users')}>Manage Users</button>
+              <button onClick={() => navigate('/security')}>Security Settings</button>
+            </>
+          )}
+          
+          {/* Admin can add organizations and employees */}
+          {userRole === 'ADMIN' && (
+            <>
+              <button onClick={() => setShowAddOrganization(!showAddOrganization)}>Add Organization</button>
+              <button onClick={handleAddEmployee}>Add Employee</button>
+            </>
+          )}
+          
+          {/* HR can only add employees */}
+          {userRole === 'HR' && (
+            <button onClick={handleAddEmployee}>Add Employee</button>
+          )}
+          
+          {/* Search bar for all roles */}
           <input
             type="text"
             placeholder="Search Organization"

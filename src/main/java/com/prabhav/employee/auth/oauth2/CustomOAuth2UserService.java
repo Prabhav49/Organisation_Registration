@@ -60,9 +60,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             .lastName(oauth2UserInfo.getLastName())
             .email(oauth2UserInfo.getEmail())
             .password(null) // No password for OAuth users
+            .role(com.prabhav.employee.entity.Role.EMPLOYEE) // Explicitly set role to EMPLOYEE
             .oauthProvider(provider.toUpperCase())
             .oauthId(oauth2UserInfo.getId())
             .isEmailVerified(true) // Trust Google email verification
+            .isTwoFactorEnabled(false) // OAuth users start with 2FA disabled
+            .isAccountLocked(false) // New users are not locked
+            .failedLoginAttempts(0) // No failed attempts for new users
             .build();
 
         return employeeRepo.save(employee);

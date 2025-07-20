@@ -1,0 +1,320 @@
+/* Modern Add Organization Styling */
+:root {
+  --primary-blue: #2563eb;
+  --primary-blue-dark: #1d4ed8;
+  --primary-blue-light: #dbeafe;
+  --secondary-green: #059669;
+  --secondary-green-dark: #047857;
+  --accent-amber: #f59e0b;
+  --accent-amber-dark: #d97706;
+  --neutral-gray: #6b7280;
+  --neutral-gray-light: #f9fafb;
+  --neutral-gray-dark: #374151;
+  --error-red: #dc2626;
+  --success-green: #16a34a;
+  --border-color: #e5e7eb;
+  --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.add-hr-container {
+  max-width: 580px;
+  margin: 40px auto;
+  padding: 40px;
+  background: linear-gradient(135deg, white 0%, var(--neutral-gray-light) 100%);
+  border-radius: 20px;
+  box-shadow: var(--shadow-large);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-hr-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green), var(--accent-amber));
+}
+
+.add-hr-container h1 {
+  text-align: center;
+  color: var(--neutral-gray-dark);
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  letter-spacing: -0.025em;
+  position: relative;
+}
+
+.add-hr-container h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-blue);
+  border-radius: 2px;
+}
+
+.form-group {
+  margin-bottom: 28px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--neutral-gray-dark);
+  font-size: 0.95rem;
+  letter-spacing: 0.025em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: white;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-group input:hover {
+  border-color: var(--neutral-gray);
+}
+
+.form-group input::placeholder {
+  color: var(--neutral-gray);
+  opacity: 0.7;
+}
+
+.error-message {
+  color: var(--error-red);
+  font-size: 0.875rem;
+  margin-top: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.error-message::before {
+  content: '⚠';
+  font-size: 0.75rem;
+}
+
+.button-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.submit-btn, .cancel-btn {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.025em;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-large);
+  background: linear-gradient(135deg, var(--primary-blue-dark), #1e40af);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, var(--neutral-gray), var(--neutral-gray-dark));
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+.cancel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-large);
+  background: linear-gradient(135deg, var(--neutral-gray-dark), #1f2937);
+}
+
+.cancel-btn:active {
+  transform: translateY(0);
+}
+
+/* Loading state for submit button */
+.submit-btn:disabled::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Error Modal Styles */
+.error-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: modal-fade-in 0.3s ease;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.error-modal {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: var(--shadow-large);
+  animation: modal-slide-up 0.3s ease;
+}
+
+@keyframes modal-slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content h3 {
+  color: var(--neutral-gray-dark);
+  margin-bottom: 24px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.error-modal button {
+  background: linear-gradient(135deg, var(--error-red), #b91c1c);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-medium);
+}
+
+.error-modal button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-large);
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .add-hr-container {
+    margin: 20px;
+    padding: 24px;
+  }
+  
+  .add-hr-container h1 {
+    font-size: 1.875rem;
+    margin-bottom: 32px;
+  }
+  
+  .button-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .submit-btn, .cancel-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-hr-container {
+    margin: 16px;
+    padding: 20px;
+  }
+  
+  .form-group input {
+    padding: 14px 16px;
+  }
+  
+  .submit-btn, .cancel-btn {
+    padding: 14px 20px;
+  }
+}
+
+/* Enhanced focus styles for accessibility */
+.submit-btn:focus-visible,
+.cancel-btn:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+.form-group input:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
