@@ -3,6 +3,7 @@ package com.prabhav.employee.controller;
 import com.prabhav.employee.auth.JwtUtil;
 import com.prabhav.employee.dto.AdminUserResponse;
 import com.prabhav.employee.dto.AuditLogResponse;
+import com.prabhav.employee.dto.EmployeeRequest;
 import com.prabhav.employee.dto.UserSessionResponse;
 import com.prabhav.employee.entity.Role;
 import com.prabhav.employee.service.AuditService;
@@ -283,13 +284,36 @@ public class AdminController {
             String lastName = userRequest.get("lastName");
             String password = userRequest.get("password");
             String roleStr = userRequest.get("role");
+            String title = userRequest.get("title");
+            String departmentIdStr = userRequest.get("departmentId");
             
             if (email == null || firstName == null || password == null || roleStr == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Missing required fields"));
             }
             
-            Role role = Role.valueOf(roleStr);
-            employeeService.createUserByAdmin(email, firstName, lastName, password, role);
+            // Create EmployeeRequest
+            EmployeeRequest employeeRequest = EmployeeRequest.builder()
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .password(password)
+                .title(title != null ? title : "")
+                .departmentId(departmentIdStr != null ? Long.parseLong(departmentIdStr) : null)
+                .build();
+            
+            employeeService.createUser(employeeRequest);
+            
+            // Update role if it's not EMPLOYEE (default)
+            if (!roleStr.equals("EMPLOYEE")) {
+                // Find the created user to get ID
+                List<AdminUserResponse> users = employeeService.getAllUsersForAdmin();
+                AdminUserResponse newUser = users.stream()
+                    .filter(u -> u.getEmail().equals(email))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("User not found after creation"));
+                
+                employeeService.updateUserRole(newUser.getId(), roleStr);
+            }
             
             return ResponseEntity.ok(Map.of("message", "User created successfully"));
         } catch (Exception e) {
@@ -319,8 +343,14 @@ public class AdminController {
                 return ResponseEntity.badRequest().body(Map.of("error", "Role is required"));
             }
             
-            Role newRole = Role.valueOf(roleStr);
-            employeeService.updateUserRole(userId, newRole);
+            // Validate role exists
+            try {
+                Role.valueOf(roleStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid role: " + roleStr));
+            }
+            
+            employeeService.updateUserRole(userId, roleStr);
             
             return ResponseEntity.ok(Map.of("message", "Role updated successfully"));
         } catch (Exception e) {
